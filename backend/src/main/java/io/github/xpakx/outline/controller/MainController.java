@@ -1,13 +1,12 @@
 package io.github.xpakx.outline.controller;
 
+import io.github.xpakx.outline.entity.dto.LinkDto;
 import io.github.xpakx.outline.entity.dto.OutlineRequest;
 import io.github.xpakx.outline.service.LinkService;
 import io.github.xpakx.outline.service.OutlineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class MainController {
@@ -22,5 +21,11 @@ public class MainController {
     @ResponseBody
     public String addLink(@RequestBody OutlineRequest request) {
         return outlineService.addLink(request);
+    }
+
+    @GetMapping("/{shortUrl}")
+    @ResponseBody
+    public LinkDto getLink(@RequestParam String shortUrl) {
+        return outlineService.getLink(shortUrl);
     }
 }

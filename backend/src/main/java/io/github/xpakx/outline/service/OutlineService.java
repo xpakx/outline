@@ -1,7 +1,9 @@
 package io.github.xpakx.outline.service;
 
 import io.github.xpakx.outline.entity.Link;
+import io.github.xpakx.outline.entity.dto.LinkDto;
 import io.github.xpakx.outline.entity.dto.OutlineRequest;
+import io.github.xpakx.outline.error.NotFoundException;
 import io.github.xpakx.outline.repo.LinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,14 @@ public class OutlineService {
                 linkRepository
                         .save(newLink)
                         .getId()
+        );
+    }
+
+    public LinkDto getLink(String shortUrl) {
+        return linkRepository.getProjectedById(
+                linkService.decode(shortUrl)
+        ).orElseThrow(
+                () -> new NotFoundException("No link for short url " + shortUrl + " found")
         );
     }
 }
