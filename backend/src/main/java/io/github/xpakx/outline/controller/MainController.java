@@ -24,7 +24,7 @@ public class MainController {
 
     @GetMapping("/{shortUrl}")
     @ResponseBody
-    public LinkDto getLink(@RequestParam String shortUrl) {
+    public LinkDto getLink(@PathVariable String shortUrl) {
         return outlineService.getLink(shortUrl);
     }
 }
