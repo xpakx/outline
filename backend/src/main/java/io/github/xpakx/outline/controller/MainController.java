@@ -21,6 +21,6 @@ public class MainController {
     @PostMapping("/outline")
     @ResponseBody
     public String addLink(@RequestBody OutlineRequest request) {
-        return "";
+        return outlineService.addLink(request);
     }
 }

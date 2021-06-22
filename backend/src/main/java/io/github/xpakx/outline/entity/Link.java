@@ -16,8 +16,6 @@ public class Link {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String shortUrl;
     private String longUrl;
-
     private String content;
 }
