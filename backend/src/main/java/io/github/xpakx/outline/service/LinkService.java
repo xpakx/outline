@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class LinkService {
     private static final String charactersString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private char[] characters = charactersString.toCharArray();
-    private int base = characters.length;
+    private final char[] characters = charactersString.toCharArray();
+    private final int base = characters.length;
 
     public String encode(Long input) {
         StringBuilder encodedString = new StringBuilder();
