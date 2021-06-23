@@ -7,11 +7,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.swing.text.html.Option;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class ExtractService {
@@ -52,6 +55,19 @@ public class ExtractService {
             return h1Candidates.get(0);
         }
 
+        List<String> metaAttrs = Arrays.asList("property", "name");
+
+        for(String attr : metaAttrs) {
+            Optional<Element> metaElem =
+                    getOneByTagNameAndProperty(rootElem, "meta", attr, "og:title");
+            if (metaElem.isPresent()) {
+                String metaElemContent = metaElem.get().getAttribute("content").strip();
+                if (metaElemContent.length() > MIN_LENGTH && titleContent.contains(metaElemContent) && metaElemContent.length() < titleContent.length()) {
+                    return metaElemContent;
+                }
+            }
+        }
+
         List<String> splitters = Arrays.asList("|", "_", " » ", "/", " - ");
         for(String splitter : splitters) {
             if(titleContent.contains(splitter)) {
@@ -61,5 +77,24 @@ public class ExtractService {
             }
         }
         return titleContent;
+    }
+
+    private List<Element> getByTagNameAndProperty(Element element, String tag, String property, String value) {
+        NodeList nList = element.getElementsByTagName(tag);
+
+        return IntStream.range(0, nList.getLength())
+                .mapToObj(nList::item)
+                .map(n -> (Element) n)
+                .filter(e -> e.hasAttribute(property))
+                .filter(e -> e.getAttribute(property).equals(value))
+                .collect(Collectors.toList());
+    }
+
+    private Optional<Element> getOneByTagNameAndProperty(Element element, String tag, String property, String value) {
+        List<Element> elemList = getByTagNameAndProperty(element, tag, property, value);
+        if(elemList.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(elemList.get(0));
     }
 }
