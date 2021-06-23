@@ -8,11 +8,8 @@ import io.github.xpakx.outline.error.UrlLoadingException;
 import io.github.xpakx.outline.repo.LinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.xml.sax.SAXException;
+import org.w3c.dom.Document;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,26 +19,38 @@ public class OutlineService {
     private final LinkService linkService;
     private final LinkRepository linkRepository;
     private final UrlReaderService urlReaderService;
+    private final ExtractService extractService;
 
     @Autowired
-    public OutlineService(LinkService linkService, LinkRepository linkRepository, UrlReaderService urlReaderService) {
+    public OutlineService(LinkService linkService, LinkRepository linkRepository, UrlReaderService urlReaderService, ExtractService extractService) {
         this.linkService = linkService;
         this.linkRepository = linkRepository;
         this.urlReaderService = urlReaderService;
+        this.extractService = extractService;
     }
 
     public String addLink(OutlineRequest request) {
         Link newLink = new Link();
         newLink.setLongUrl(request.getUrl());
 
+        String pageContent = "";
+
         try {
-            newLink.setContent(urlReaderService.read(new URL(request.getUrl())));
+            pageContent = urlReaderService.read(new URL(request.getUrl()));
         } catch(MalformedURLException ex) {
             throw new UrlLoadingException("Malformed url!");
         } catch(IOException ex) {
             throw new UrlLoadingException("Error while loading data from url!");
         }
+        
+        try {
+            Document pageDocument = extractService.parse(pageContent);
+            newLink.setTitle(extractService.extractTitle(pageDocument, new URL(request.getUrl())));
+        } catch(Exception ex) {
 
+        }
+
+        newLink.setContent(pageContent);
         return linkService.encode(
                 linkRepository
                         .save(newLink)

@@ -14,6 +14,7 @@ public class Link {
     private Long id;
 
     private String longUrl;
+    private String title;
 
     @Column(columnDefinition="TEXT")
     private String content;
