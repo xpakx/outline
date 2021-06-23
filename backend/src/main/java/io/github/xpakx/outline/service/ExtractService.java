@@ -11,10 +11,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ExtractService {
@@ -55,7 +52,14 @@ public class ExtractService {
             return h1Candidates.get(0);
         }
 
-
+        List<String> splitters = Arrays.asList("|", "_", " » ", "/", " - ");
+        for(String splitter : splitters) {
+            if(titleContent.contains(splitter)) {
+                List<String> splitTitles = Arrays.asList(titleContent.split(splitter));
+                splitTitles.sort(Comparator.comparingInt(String::length).reversed());
+                return splitTitles.get(0);
+            }
+        }
         return titleContent;
     }
 }
