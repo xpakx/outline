@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -24,15 +25,23 @@ public class ExtractService {
         return builder.parse(input);
     }
 
-    public String extractTitle(Document doc) {
+    public String extractTitle(Document doc, URL url) {
         final int MIN_LENGTH = 2;
 
         Element rootElem = doc.getDocumentElement();
         NodeList titleElems = rootElem.getElementsByTagName("title");
 
-        //no title elem
         if(titleElems.getLength() == 0) {
-
+            String path = url.getPath();
+            List<String> candidates = Arrays.asList(path.split("/"));
+            Collections.reverse(candidates);
+            String regex = "\\d+";
+            for(String candidate : candidates) {
+                if(candidate.length() > MIN_LENGTH && !candidate.matches(regex)) {
+                    candidate = candidate.replace("-", " ");
+                    return candidate.split("\\.")[0];
+                }
+            }
         }
 
         String titleContent = titleElems.item(0).getTextContent().strip();
