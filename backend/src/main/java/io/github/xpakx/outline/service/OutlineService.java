@@ -9,7 +9,9 @@ import io.github.xpakx.outline.repo.LinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -42,12 +44,14 @@ public class OutlineService {
         } catch(IOException ex) {
             throw new UrlLoadingException("Error while loading data from url!");
         }
-        
+
         try {
             Document pageDocument = extractService.parse(pageContent);
             newLink.setTitle(extractService.extractTitle(pageDocument, new URL(request.getUrl())));
-        } catch(Exception ex) {
-
+        } catch(ParserConfigurationException ex) {
+            throw new UrlLoadingException("Parser configuration error");
+        } catch(SAXException | IOException ex) {
+            throw new UrlLoadingException("Parsing error" + ex.getMessage());
         }
 
         newLink.setContent(pageContent);
