@@ -11,21 +11,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class ExtractService {
+    final int MIN_LENGTH = 2;
+
     public Document parse(String input) {
         return Jsoup.parse(input);
     }
 
     public String extractTitle(Document doc, URL url) {
-        final int MIN_LENGTH = 2;
-
         String titleContent = doc.title();
 
         if(titleContent.length() == 0) {
-            return getTitleFromUrl(url, MIN_LENGTH);
+            return getTitleFromUrl(url);
         }
 
         List<Element> h1Elems = doc.getElementsByTag("h1");
-
         List<String> h1Candidates = new ArrayList<>();
 
         for(Element elem : h1Elems) {
@@ -67,7 +66,7 @@ public class ExtractService {
         return titleContent;
     }
 
-    private String getTitleFromUrl(URL url, int MIN_LENGTH) {
+    private String getTitleFromUrl(URL url) {
         String path = url.getPath();
         List<String> candidates = Arrays.asList(path.split("/"));
         Collections.reverse(candidates);
