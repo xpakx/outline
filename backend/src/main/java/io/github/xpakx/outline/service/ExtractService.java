@@ -20,7 +20,7 @@ public class ExtractService {
 
         String titleContent = doc.title();
 
-        if(titleContent.length() > 0) {
+        if(titleContent.length() == 0) {
             String path = url.getPath();
             List<String> candidates = Arrays.asList(path.split("/"));
             Collections.reverse(candidates);
