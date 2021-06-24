@@ -52,7 +52,7 @@ public class OutlineService {
         } catch(IOException ex) {
             throw new UrlLoadingException("Parsing error" + ex.getMessage());
         }
-        
+
         return linkService.encode(
                 linkRepository
                         .save(newLink)

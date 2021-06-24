@@ -80,6 +80,38 @@ public class ExtractService {
         return doc.body().text();
     }
 
+    public String extractDate(Document doc) {
+        List<String> metaPropertyValues = Arrays.asList("article:published_time", "og:published_time",
+                "article:published_time", "rnews:datePublished");
+        List<String> metaNameValues = Arrays.asList("article:published_time", "article:publication_date",
+                "OriginalPublicationDate", "article_date_original", "sailthru.date", "PublishDate",
+                "publish_date");
+
+        for(String value: metaPropertyValues) {
+            Optional<Element> metaElem =
+                    getOneByTagNameAndProperty(doc.head(), "meta","property", value);
+            if (metaElem.isPresent()) {
+                String metaElemContent = metaElem.get().attr("content").strip();
+                if (metaElemContent.length() > 0) {
+                    return metaElemContent;
+                }
+            }
+        }
+
+        for(String value: metaNameValues) {
+            Optional<Element> metaElem =
+                    getOneByTagNameAndProperty(doc.head(), "meta","name", value);
+            if (metaElem.isPresent()) {
+                String metaElemContent = metaElem.get().attr("content").strip();
+                if (metaElemContent.length() > 0) {
+                    return metaElemContent;
+                }
+            }
+        }
+
+        return "";
+    }
+
     private List<Element> getByTagNameAndProperty(Element element, String tag, String property, String value) {
         List<Element> nList = element.getElementsByAttributeValue(property, value);
 
