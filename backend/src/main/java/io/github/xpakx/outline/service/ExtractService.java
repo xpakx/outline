@@ -87,29 +87,27 @@ public class ExtractService {
                 "OriginalPublicationDate", "article_date_original", "sailthru.date", "PublishDate",
                 "publish_date");
 
-        for(String value: metaPropertyValues) {
-            Optional<Element> metaElem =
-                    getOneByTagNameAndProperty(doc.head(), "meta","property", value);
-            if (metaElem.isPresent()) {
-                String metaElemContent = metaElem.get().attr("content").strip();
-                if (metaElemContent.length() > 0) {
-                    return metaElemContent;
-                }
-            }
-        }
+        Optional<String> metaElemContent1 = getDateFromMeta(doc, metaPropertyValues, "property");
+        if (metaElemContent1.isPresent()) return metaElemContent1.get();
 
-        for(String value: metaNameValues) {
-            Optional<Element> metaElem =
-                    getOneByTagNameAndProperty(doc.head(), "meta","name", value);
-            if (metaElem.isPresent()) {
-                String metaElemContent = metaElem.get().attr("content").strip();
-                if (metaElemContent.length() > 0) {
-                    return metaElemContent;
-                }
-            }
-        }
+        Optional<String> metaElemContent = getDateFromMeta(doc, metaNameValues, "name");
+        if (metaElemContent.isPresent()) return metaElemContent.get();
 
         return "";
+    }
+
+    private Optional<String> getDateFromMeta(Document doc, List<String> metaValues, String property) {
+        for (String value : metaValues) {
+            Optional<Element> metaElem =
+                    getOneByTagNameAndProperty(doc.head(), "meta", property, value);
+            if (metaElem.isPresent()) {
+                String metaElemContent = metaElem.get().attr("content").strip();
+                if (metaElemContent.length() > 0) {
+                    return Optional.of(metaElemContent);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private List<Element> getByTagNameAndProperty(Element element, String tag, String property, String value) {
