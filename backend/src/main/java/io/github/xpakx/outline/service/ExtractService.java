@@ -76,6 +76,10 @@ public class ExtractService {
         return titleContent;
     }
 
+    public String extractContent(Document doc) {
+        return doc.body().text();
+    }
+
     private List<Element> getByTagNameAndProperty(Element element, String tag, String property, String value) {
         List<Element> nList = element.getElementsByAttributeValue(property, value);
 
