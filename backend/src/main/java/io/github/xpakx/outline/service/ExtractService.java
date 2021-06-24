@@ -111,9 +111,7 @@ public class ExtractService {
     }
 
     private List<Element> getByTagNameAndProperty(Element element, String tag, String property, String value) {
-        List<Element> nList = element.getElementsByAttributeValue(property, value);
-
-        return nList.stream()
+        return element.getElementsByAttributeValue(property, value).stream()
                 .filter(e -> e.tagName().equals(tag))
                 .collect(Collectors.toList());
     }
