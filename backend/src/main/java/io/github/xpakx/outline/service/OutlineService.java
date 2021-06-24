@@ -8,7 +8,7 @@ import io.github.xpakx.outline.error.UrlLoadingException;
 import io.github.xpakx.outline.repo.LinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
+import org.jsoup.nodes.Document;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -48,9 +48,7 @@ public class OutlineService {
         try {
             Document pageDocument = extractService.parse(pageContent);
             newLink.setTitle(extractService.extractTitle(pageDocument, new URL(request.getUrl())));
-        } catch(ParserConfigurationException ex) {
-            throw new UrlLoadingException("Parser configuration error");
-        } catch(SAXException | IOException ex) {
+        } catch(IOException ex) {
             throw new UrlLoadingException("Parsing error" + ex.getMessage());
         }
 
