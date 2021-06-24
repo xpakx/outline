@@ -46,13 +46,16 @@ public class OutlineService {
         }
 
         try {
+            URL url = new URL(request.getUrl());
             Document pageDocument = extractService.parse(pageContent);
-            newLink.setTitle(extractService.extractTitle(pageDocument, new URL(request.getUrl())));
+            newLink.setTitle(extractService.extractTitle(pageDocument, url));
             newLink.setContent(extractService.extractContent(pageDocument));
-            newLink.setDate(extractService.extractDate(pageDocument));
+            newLink.setDate(extractService.extractDate(pageDocument, url));
         } catch(IOException ex) {
             throw new UrlLoadingException("Parsing error" + ex.getMessage());
         }
+
+
 
         return linkService.encode(
                 linkRepository

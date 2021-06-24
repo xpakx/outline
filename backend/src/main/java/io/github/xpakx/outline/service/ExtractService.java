@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,14 +26,13 @@ public class ExtractService {
             return getTitleFromUrl(url);
         }
 
-        return getTitleFromH1s(doc, titleContent)
-                .orElse(
-                        getTitleFromMetaTags(doc, titleContent)
-                        .orElse(
-                                splitTitle(titleContent)
-                                .orElse(titleContent)
+        return getTitleFromH1s(doc, titleContent).orElse(
+                getTitleFromMetaTags(doc, titleContent).orElse(
+                        splitTitle(titleContent).orElse(
+                                titleContent
                         )
-                );
+                )
+        );
     }
 
     private String getTitleFromUrl(URL url) {
@@ -104,7 +105,7 @@ public class ExtractService {
         return doc.body().text();
     }
 
-    public String extractDate(Document doc) {
+    public String extractDate(Document doc, URL url) {
         List<String> metaPropertyValues = Arrays.asList("article:published_time", "og:published_time",
                 "article:published_time", "rnews:datePublished");
         List<String> metaNameValues = Arrays.asList("article:published_time", "article:publication_date",
@@ -116,6 +117,10 @@ public class ExtractService {
 
         Optional<String> metaElemContent = getDateFromMeta(doc, metaNameValues, "name");
         if (metaElemContent.isPresent()) return metaElemContent.get();
+
+        String urlDateRegex = "(20[0-2][0-9]([-_/]?)[0-3][0-9](?:\\2[0-3]?[0-9])?)";
+        Pattern pattern = Pattern.compile(urlDateRegex);
+        Matcher matcher = pattern.matcher(url.getPath());
 
         return "";
     }
