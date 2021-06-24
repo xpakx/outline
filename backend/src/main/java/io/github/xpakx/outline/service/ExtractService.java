@@ -24,46 +24,14 @@ public class ExtractService {
             return getTitleFromUrl(url);
         }
 
-        List<Element> h1Elems = doc.getElementsByTag("h1");
-        List<String> h1Candidates = new ArrayList<>();
-
-        for(Element elem : h1Elems) {
-            String h1Title = elem.text().strip();
-            if(h1Title.equalsIgnoreCase(titleContent)) {
-                return titleContent;
-            }
-            if(h1Title.length() > MIN_LENGTH && titleContent.contains(h1Title)) {
-                h1Candidates.add(h1Title);
-            }
-        }
-
-        if(h1Candidates.size() > 0) {
-            h1Candidates.sort(Comparator.comparingInt(String::length).reversed());
-            return h1Candidates.get(0);
-        }
-
-        List<String> metaAttrs = Arrays.asList("property", "name");
-
-        for(String attr : metaAttrs) {
-            Optional<Element> metaElem =
-                    getOneByTagNameAndProperty(doc.head(), "meta", attr, "og:title");
-            if (metaElem.isPresent()) {
-                String metaElemContent = metaElem.get().attr("content").strip();
-                if (metaElemContent.length() > MIN_LENGTH && titleContent.contains(metaElemContent) && metaElemContent.length() < titleContent.length()) {
-                    return metaElemContent;
-                }
-            }
-        }
-
-        List<String> splitters = Arrays.asList("|", "_", " » ", "/", " - ");
-        for(String splitter : splitters) {
-            if(titleContent.contains(splitter)) {
-                List<String> splitTitles = Arrays.asList(titleContent.split(splitter));
-                splitTitles.sort(Comparator.comparingInt(String::length).reversed());
-                return splitTitles.get(0);
-            }
-        }
-        return titleContent;
+        return getTitleFromH1s(doc, titleContent)
+                .orElse(
+                        getTitleFromMetaTags(doc, titleContent)
+                        .orElse(
+                                splitTitle(titleContent)
+                                .orElse(titleContent)
+                        )
+                );
     }
 
     private String getTitleFromUrl(URL url) {
@@ -79,6 +47,58 @@ public class ExtractService {
         }
         return "";
     }
+
+    private Optional<String> getTitleFromH1s(Document doc, String titleContent) {
+        List<Element> h1Elems = doc.getElementsByTag("h1");
+        List<String> h1Candidates = new ArrayList<>();
+
+        for(Element elem : h1Elems) {
+            String h1Title = elem.text().strip();
+            if(h1Title.equalsIgnoreCase(titleContent)) {
+                return Optional.of(titleContent);
+            }
+            if(h1Title.length() > MIN_LENGTH && titleContent.contains(h1Title)) {
+                h1Candidates.add(h1Title);
+            }
+        }
+
+        if(h1Candidates.size() > 0) {
+            h1Candidates.sort(Comparator.comparingInt(String::length).reversed());
+            return Optional.of(h1Candidates.get(0));
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<String> getTitleFromMetaTags(Document doc, String titleContent) {
+        List<String> metaAttrs = Arrays.asList("property", "name");
+
+        for(String attr : metaAttrs) {
+            Optional<Element> metaElem =
+                    getOneByTagNameAndProperty(doc.head(), "meta", attr, "og:title");
+            if (metaElem.isPresent()) {
+                String metaElemContent = metaElem.get().attr("content").strip();
+                if (metaElemContent.length() > MIN_LENGTH && titleContent.contains(metaElemContent) && metaElemContent.length() < titleContent.length()) {
+                    return Optional.of(metaElemContent);
+                }
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<String> splitTitle(String titleContent) {
+        List<String> splitters = Arrays.asList("|", "_", " » ", "/", " - ");
+        for(String splitter : splitters) {
+            if(titleContent.contains(splitter)) {
+                List<String> splitTitles = Arrays.asList(titleContent.split(splitter));
+                splitTitles.sort(Comparator.comparingInt(String::length).reversed());
+                return Optional.of(splitTitles.get(0));
+            }
+        }
+        return Optional.empty();
+    }
+
 
     public String extractContent(Document doc) {
         return doc.body().text();
