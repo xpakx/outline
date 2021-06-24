@@ -21,16 +21,7 @@ public class ExtractService {
         String titleContent = doc.title();
 
         if(titleContent.length() == 0) {
-            String path = url.getPath();
-            List<String> candidates = Arrays.asList(path.split("/"));
-            Collections.reverse(candidates);
-            String regex = "\\d+";
-            for(String candidate : candidates) {
-                if(candidate.length() > MIN_LENGTH && !candidate.matches(regex)) {
-                    candidate = candidate.replace("-", " ");
-                    return candidate.split("\\.")[0];
-                }
-            }
+            return getTitleFromUrl(url, MIN_LENGTH);
         }
 
         List<Element> h1Elems = doc.getElementsByTag("h1");
@@ -74,6 +65,20 @@ public class ExtractService {
             }
         }
         return titleContent;
+    }
+
+    private String getTitleFromUrl(URL url, int MIN_LENGTH) {
+        String path = url.getPath();
+        List<String> candidates = Arrays.asList(path.split("/"));
+        Collections.reverse(candidates);
+        String regex = "\\d+";
+        for(String candidate : candidates) {
+            if(candidate.length() > MIN_LENGTH && !candidate.matches(regex)) {
+                candidate = candidate.replace("-", " ");
+                return candidate.split("\\.")[0];
+            }
+        }
+        return "";
     }
 
     public String extractContent(Document doc) {
