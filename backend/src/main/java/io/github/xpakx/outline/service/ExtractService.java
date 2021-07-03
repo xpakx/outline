@@ -125,7 +125,7 @@ public class ExtractService {
 
         String twoElemDate = "";
         while(matcher.find()) {
-            if(matcher.group(1).equals("")) {
+            if(matcher.group(2).equals("")) {
                 String[] splitDate = new String[2];
                 if(matcher.group(0).length() == 6) {
                     if(twoElemDate.equals("")) {
@@ -135,7 +135,7 @@ public class ExtractService {
                     return matcher.group(0);
                 }
             } else {
-                String[] splitDate = matcher.group(0).split(matcher.group(1));
+                String[] splitDate = matcher.group(0).split(matcher.group(2));
                 if(splitDate.length == 3) {
                     return matcher.group(0);
                 }
