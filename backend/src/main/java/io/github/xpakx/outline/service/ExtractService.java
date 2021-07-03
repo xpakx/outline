@@ -126,7 +126,6 @@ public class ExtractService {
         Pattern pattern = Pattern.compile(urlDateRegex);
         Matcher matcher = pattern.matcher(url.getPath());
 
-
         String twoElemDate = "";
         while(matcher.find()) {
             if(matcher.group(2).equals("")) {
@@ -148,9 +147,13 @@ public class ExtractService {
             }
         }
 
+        String urlReverseDateRegex = "([0-3][0-9]([-_/])[0-3][0-9](?:\\2)20[0-2][0-9])";
+        Pattern patternReverse = Pattern.compile(urlReverseDateRegex);
+        Matcher matcherReverse = patternReverse.matcher(url.getPath());
 
-
-
+        while(matcherReverse.find()) {
+            return matcher.group(0);
+        }
 
 
 
