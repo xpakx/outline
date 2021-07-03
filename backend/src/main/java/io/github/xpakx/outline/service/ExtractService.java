@@ -122,6 +122,37 @@ public class ExtractService {
         Pattern pattern = Pattern.compile(urlDateRegex);
         Matcher matcher = pattern.matcher(url.getPath());
 
+
+        String[] twoElemDate = null;
+        while(matcher.find()) {
+            if(matcher.group(1).equals("")) {
+                String[] splitDate = new String[2];
+                if(matcher.group(0).length() == 6) {
+                    splitDate[0] = matcher.group(0).substring(0, 4);
+                    splitDate[1] = matcher.group(0).substring(4);
+                    if(twoElemDate == null) {
+                        twoElemDate = splitDate;
+                    }
+                } else {
+                    return matcher.group(0);
+                }
+            } else {
+                String[] splitDate = matcher.group(0).split(matcher.group(1));
+                if(splitDate.length == 3) {
+                    return matcher.group(0);
+                }
+                if(twoElemDate == null) {
+                    twoElemDate = splitDate;
+                }
+            }
+        }
+
+
+        String dateFromUrl = "";
+
+
+
+
         return "";
     }
 
