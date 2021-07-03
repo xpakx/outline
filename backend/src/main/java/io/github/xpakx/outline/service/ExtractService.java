@@ -147,11 +147,11 @@ public class ExtractService {
             }
         }
 
-        String urlReverseDateRegex = "([0-3][0-9]([-_/])[0-3][0-9](?:\\2)20[0-2][0-9])";
+        String urlReverseDateRegex = "([0-3][0-9]([-_/])[0-3][0-9]\\220[0-2][0-9])";
         Pattern patternReverse = Pattern.compile(urlReverseDateRegex);
         Matcher matcherReverse = patternReverse.matcher(url.getPath());
 
-        while(matcherReverse.find()) {
+        if(matcherReverse.find()) {
             return matcher.group(0);
         }
 
