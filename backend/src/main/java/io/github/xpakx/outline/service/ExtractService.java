@@ -106,9 +106,9 @@ public class ExtractService {
     }
 
     public String extractDate(Document doc, URL url) {
-        List<String> metaPropertyValues = Arrays.asList("article:published_time", "og:published_time",
+        final List<String> metaPropertyValues = Arrays.asList("article:published_time", "og:published_time",
                 "article:published_time", "rnews:datePublished");
-        List<String> metaNameValues = Arrays.asList("article:published_time", "article:publication_date",
+        final List<String> metaNameValues = Arrays.asList("article:published_time", "article:publication_date",
                 "OriginalPublicationDate", "article_date_original", "sailthru.date", "PublishDate",
                 "publish_date");
 
@@ -123,15 +123,13 @@ public class ExtractService {
         Matcher matcher = pattern.matcher(url.getPath());
 
 
-        String[] twoElemDate = null;
+        String twoElemDate = "";
         while(matcher.find()) {
             if(matcher.group(1).equals("")) {
                 String[] splitDate = new String[2];
                 if(matcher.group(0).length() == 6) {
-                    splitDate[0] = matcher.group(0).substring(0, 4);
-                    splitDate[1] = matcher.group(0).substring(4);
-                    if(twoElemDate == null) {
-                        twoElemDate = splitDate;
+                    if(twoElemDate.equals("")) {
+                        twoElemDate = matcher.group(0);
                     }
                 } else {
                     return matcher.group(0);
@@ -141,19 +139,20 @@ public class ExtractService {
                 if(splitDate.length == 3) {
                     return matcher.group(0);
                 }
-                if(twoElemDate == null) {
-                    twoElemDate = splitDate;
+                if(twoElemDate.equals("")) {
+                    twoElemDate = matcher.group(0);
                 }
             }
         }
 
 
-        String dateFromUrl = "";
 
 
 
 
-        return "";
+
+
+        return twoElemDate;
     }
 
     private Optional<String> getDateFromMeta(Document doc, List<String> metaValues, String property) {
