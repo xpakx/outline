@@ -118,7 +118,11 @@ public class ExtractService {
         Optional<String> metaElemContent = getDateFromMeta(doc, metaNameValues, "name");
         if (metaElemContent.isPresent()) return metaElemContent.get();
 
-        String urlDateRegex = "(20[0-2][0-9]([-_/]?)[0-3][0-9](?:\\2[0-3]?[0-9])?)";
+        /* year starting with 20, then sth between 00 and 29, then optional separator
+        then number between 00 and 39, then optional and without remembering group (?:):
+        back reference to match with separator (\2) and number between 00 and 39
+        */
+        String urlDateRegex = "(20[0-2][0-9]([-_/]?)[0-3][0-9](?:\\2[0-3][0-9])?)";
         Pattern pattern = Pattern.compile(urlDateRegex);
         Matcher matcher = pattern.matcher(url.getPath());
 
@@ -126,7 +130,6 @@ public class ExtractService {
         String twoElemDate = "";
         while(matcher.find()) {
             if(matcher.group(2).equals("")) {
-                String[] splitDate = new String[2];
                 if(matcher.group(0).length() == 6) {
                     if(twoElemDate.equals("")) {
                         twoElemDate = matcher.group(0);
