@@ -122,16 +122,18 @@ public class ExtractService {
         then number between 00 and 39, then optional and without remembering group (?:):
         back reference to match with separator (\2) and number between 00 and 39
         */
-        String urlDateRegex = "(20[0-2][0-9]([-_/]?)[0-3][0-9](?:\\2[0-3]?[0-9])?)";
+        String urlDateRegex = "(20[0-2][0-9])([-_/]?)([0-3][0-9])\\2([0-3]?[0-9])?";
         Pattern pattern = Pattern.compile(urlDateRegex);
         Matcher matcher = pattern.matcher(url.getPath());
 
-        String twoElemDate = "";
+        String year = "";
+        String month = "";
         while(matcher.find()) {
             if(matcher.group(2).equals("")) {
                 if(matcher.group(0).length() == 6) {
-                    if(twoElemDate.equals("")) {
-                        twoElemDate = matcher.group(0);
+                    if(year.equals("")) {
+                        year = matcher.group(1);
+                        month = matcher.group(3);
                     }
                 } else {
                     return matcher.group(0);
@@ -141,13 +143,14 @@ public class ExtractService {
                 if(splitDate.length == 3) {
                     return matcher.group(0);
                 }
-                if(twoElemDate.equals("")) {
-                    twoElemDate = matcher.group(0);
+                if(year.equals("")) {
+                    year = matcher.group(1);
+                    month = matcher.group(3);
                 }
             }
         }
 
-        String urlReverseDateRegex = "([0-3]?[0-9]([-_/])[0-3][0-9]\\220[0-2][0-9])";
+        String urlReverseDateRegex = "([0-3]?[0-9])([-_/])([0-3][0-9])\\2(20[0-2][0-9])";
         Pattern patternReverse = Pattern.compile(urlReverseDateRegex);
         Matcher matcherReverse = patternReverse.matcher(url.getPath());
 
@@ -180,7 +183,56 @@ public class ExtractService {
                     .get();
         }
 
-        return twoElemDate;
+        String stringDoc = doc.outerHtml();
+
+        String patternHref = "<a.*?>";
+        String patternLink = "<link.*?>";
+        String patternImg = "<img.*?>";
+
+        stringDoc = stringDoc.replaceAll(patternHref, "")
+                .replaceAll(patternLink, "")
+                .replaceAll(patternImg, "");
+
+        String htmlDateRegex = "(20[0-2][0-9])([-_/])([0-3][0-9])\\2([0-3]?[0-9])";
+        Pattern patternHtml = Pattern.compile(htmlDateRegex);
+        Matcher matcherHtml = patternHtml.matcher(stringDoc);
+
+        List<String> datesFromHtml = new ArrayList<>();
+        while(matcherHtml.find()) {
+            if(year.length() > 0) {
+                if(year.equals(matcherHtml.group(1)) &&
+                        month.equals(matcherHtml.group(3))) {
+                    datesFromHtml.add(matcherHtml.group(1)+"/"+matcherHtml.group(3)+"/"+matcherHtml.group(4));
+                }
+            } else {
+                datesFromHtml.add(matcherHtml.group(1)+"/"+matcherHtml.group(3)+"/"+matcherHtml.group(4));
+            }
+        }
+
+        Matcher matcherHtmlReversed = patternReverse.matcher(stringDoc);
+        while(matcherHtml.find()) {
+            if(year.length() > 0) {
+                if(year.substring(0,4).equals(matcherHtml.group(4)) &&
+                        month.substring(4,6).equals(matcherHtml.group(3))) {
+                    datesFromHtml.add(matcherHtml.group(4)+"/"+matcherHtml.group(3)+"/"+matcherHtml.group(1));
+                }
+            } else {
+                datesFromHtml.add(matcherHtml.group(4)+"/"+matcherHtml.group(3)+"/"+matcherHtml.group(1));
+            }
+        }
+
+        if(datesFromHtml.size() == 1) {
+            return datesFromHtml.get(0);
+        }
+
+        datesFromHtml = datesFromHtml.stream().distinct()
+                .collect(Collectors.toList());
+
+        if(datesFromHtml.size() == 1) {
+            return datesFromHtml.get(0);
+        }
+        
+        return year + "/" + month;
     }
 
     private Optional<String> getDateFromMeta(Document doc, List<String> metaValues, String property) {
