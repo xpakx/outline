@@ -210,7 +210,7 @@ public class ExtractService {
         }
 
         Matcher matcherHtmlReversed = patternReverse.matcher(stringDoc);
-        while(matcherHtml.find()) {
+        while(matcherHtmlReversed.find()) {
             if(year.length() > 0) {
                 if(year.substring(0,4).equals(matcherHtml.group(4)) &&
                         month.substring(4,6).equals(matcherHtml.group(3))) {
@@ -231,8 +231,8 @@ public class ExtractService {
         if(datesFromHtml.size() == 1) {
             return datesFromHtml.get(0);
         }
-        
-        return year + "/" + month;
+
+        return year.equals("") ? "" : year + "/" + month;
     }
 
     private Optional<String> getDateFromMeta(Document doc, List<String> metaValues, String property) {
