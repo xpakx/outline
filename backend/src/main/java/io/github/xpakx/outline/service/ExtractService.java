@@ -160,18 +160,14 @@ public class ExtractService {
 
         Set<String> elementSet = new HashSet<>();
 
-        List<Element> elemList = doc.select("[class*=\"date\"]");
-        for(Element elem : elemList) {
-            List<Element> children = elem.children();
-            if(children.size() == 0) {
-                String content = elem.text().strip();
-                if(content.length() > MIN_LENGTH) elementSet.add(content);
-            }
-            else if(children.size() == 1 && children.get(0).childrenSize() == 0) {
-                String content = children.get(0).text().strip();
-                if(content.length() > MIN_LENGTH) elementSet.add(content);
-            }
-        }
+        doc.select("[class*=\"date\"]")
+                .stream()
+                .filter((a) -> a.childrenSize() <= 1)
+                .map((a) -> a.childrenSize() == 1 ? a.children().get(0) : a)
+                .map((a) -> a.text().strip())
+                .forEach((a) -> {
+                    if(a.length() > MIN_LENGTH) elementSet.add(a);
+                });
 
         if(elementSet.size() == 1) {
             return elementSet.stream()
