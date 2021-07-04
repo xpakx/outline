@@ -122,7 +122,7 @@ public class ExtractService {
         then number between 00 and 39, then optional and without remembering group (?:):
         back reference to match with separator (\2) and number between 00 and 39
         */
-        String urlDateRegex = "(20[0-2][0-9]([-_/]?)[0-3][0-9](?:\\2[0-3][0-9])?)";
+        String urlDateRegex = "(20[0-2][0-9]([-_/]?)[0-3][0-9](?:\\2[0-3]?[0-9])?)";
         Pattern pattern = Pattern.compile(urlDateRegex);
         Matcher matcher = pattern.matcher(url.getPath());
 
@@ -147,7 +147,7 @@ public class ExtractService {
             }
         }
 
-        String urlReverseDateRegex = "([0-3][0-9]([-_/])[0-3][0-9]\\220[0-2][0-9])";
+        String urlReverseDateRegex = "([0-3]?[0-9]([-_/])[0-3][0-9]\\220[0-2][0-9])";
         Pattern patternReverse = Pattern.compile(urlReverseDateRegex);
         Matcher matcherReverse = patternReverse.matcher(url.getPath());
 
@@ -155,7 +155,7 @@ public class ExtractService {
             return matcher.group(0);
         }
 
-
+        
 
 
         return twoElemDate;
