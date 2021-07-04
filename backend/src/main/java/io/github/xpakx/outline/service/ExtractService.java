@@ -157,17 +157,15 @@ public class ExtractService {
         if(matcherReverse.find()) {
             return matcher.group(0);
         }
-
-        Set<String> elementSet = new HashSet<>();
-
-        doc.select("[class*=\"date\"]")
+        
+        List<String> elementSet = doc.select("[class*=\"date\"]")
                 .stream()
                 .filter((a) -> a.childrenSize() <= 1)
                 .map((a) -> a.childrenSize() == 1 ? a.children().get(0) : a)
                 .map((a) -> a.text().strip())
-                .forEach((a) -> {
-                    if(a.length() > MIN_LENGTH) elementSet.add(a);
-                });
+                .filter((a) -> a.length() > MIN_LENGTH)
+                .distinct()
+                .collect(Collectors.toList());
 
         if(elementSet.size() == 1) {
             return elementSet.stream()
