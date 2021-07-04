@@ -155,8 +155,30 @@ public class ExtractService {
             return matcher.group(0);
         }
 
-        
+        Set<String> elementSet = new HashSet<>();
 
+        List<Element> elemList = doc.select("[class*=\"date\"]");
+        for(Element elem : elemList) {
+            List<Element> children = elem.children();
+            if(children.size() == 0) {
+                String content = elem.text().strip();
+                if(content.length() > MIN_LENGTH) elementSet.add(content);
+            }
+            else if(children.size() == 1 && children.get(0).childrenSize() == 0) {
+                String content = children.get(0).text().strip();
+                if(content.length() > MIN_LENGTH) elementSet.add(content);
+            }
+        }
+
+        if(elementSet.size() == 1) {
+            return elementSet.stream()
+                    .map((str) -> str
+                            .replace("Posted", "")
+                            .replace("posted", "")
+                            .strip())
+                    .findAny()
+                    .get();
+        }
 
         return twoElemDate;
     }
