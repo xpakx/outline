@@ -262,19 +262,24 @@ public class ExtractService {
         final List<String> metaNameValues = Arrays.asList("shareaholic:article_author_name", "byl",
                 "sailthru.author", "author");
 
+        Optional<String> authorFromMetaName = metaNameValues.stream()
+                .map((a) -> getAuthorFromMeta(doc, a, "name"))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findAny();
 
-        for (String value : metaNameValues) {
-            Optional<String> authorFromMeta = getAuthorFromMeta(doc, value, "name");
-            if(authorFromMeta.isPresent()) {
-                return authorFromMeta.get();
-            }
+        if(authorFromMetaName.isPresent()) {
+            return authorFromMetaName.get();
         }
 
-        for (String value : metaPropertyValues) {
-            Optional<String> authorFromMeta = getAuthorFromMeta(doc, value, "property");
-            if(authorFromMeta.isPresent()) {
-                return authorFromMeta.get();
-            }
+        Optional<String> authorFromMetaProperty = metaNameValues.stream()
+                .map((a) -> getAuthorFromMeta(doc, a, "property"))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findAny();
+
+        if(authorFromMetaProperty.isPresent()) {
+            return authorFromMetaName.get();
         }
 
 
