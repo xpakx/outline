@@ -286,6 +286,32 @@ public class ExtractService {
             return authorLinks;
         }
 
+        Element authorElem = doc.selectFirst("[class*=\"author\"]");
+        if(authorElem != null) {
+            List<Element> children = authorElem.children();
+            if(children.size() == 0) {
+                String authorElemContent = authorElem.text().strip();
+                if(authorElemContent.length() > MIN_LENGTH) return authorElemContent;
+            } else if(children.size() == 1 && children.get(0).childrenSize() == 0) {
+                String authorElemContent = children.get(0).text().strip();
+                if(authorElemContent.length() > MIN_LENGTH) return authorElemContent;
+            }
+
+            List<Element> nameElements = authorElem.select("[class*=\"name\"]");
+            nameElements.addAll(authorElem.select("[id*=\"name\"]"));
+            nameElements.addAll(authorElem.select("[itemprop*=\"name\"]"));
+
+            String authorsFromNameElements = nameElements.stream()
+                    .filter((a) -> a.childrenSize() == 0 || (a.childrenSize() == 1 && a.children().get(0).childrenSize() == 0))
+                    .map((a) -> a.childrenSize() == 0 ? a.text().strip() : a.children().get(0).text().strip())
+                    .filter((a) -> a.length() > MIN_LENGTH)
+                    .distinct()
+                    .collect(Collectors.joining());
+            if(authorsFromNameElements.length() > 0) {
+                return authorLinks;
+            }
+        }
+
 
 
         return "";
