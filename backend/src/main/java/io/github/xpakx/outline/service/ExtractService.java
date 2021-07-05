@@ -275,7 +275,17 @@ public class ExtractService {
             }
         }
 
-        
+        for (String value : metaPropertyValues) {
+            Optional<String> authorFromMeta = getOneByTagNameAndProperty(doc.head(), "meta", "property", value).stream()
+                    .filter((a) -> a.hasAttr("content") || a.hasAttr("value"))
+                    .map((a) -> a.hasAttr("content") ?
+                            a.attr("content").strip() : a.attr("value").strip())
+                    .filter((a) -> !a.contains("http"))
+                    .findAny();
+            if(authorFromMeta.isPresent()) {
+                return authorFromMeta.get();
+            }
+        }
 
 
         return "";
