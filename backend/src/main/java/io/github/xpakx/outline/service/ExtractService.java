@@ -258,24 +258,25 @@ public class ExtractService {
     }
 
     public String extractAuthor(Document doc) {
-        final List<String> metaPropertyValues = Arrays.asList("article:author");
+        final List<String> metaPropertyValues = List.of("article:author");
         final List<String> metaNameValues = Arrays.asList("shareaholic:article_author_name", "byl",
                 "sailthru.author", "author");
 
 
         for (String value : metaNameValues) {
-            Optional<Element> metaElem =
-                    getOneByTagNameAndProperty(doc.head(), "meta", "name", value);
-            if (metaElem.isPresent()) {
-                if(metaElem.get().hasAttr("content")) {
-                    String metaElemContent = metaElem.get().attr("content").strip();
-                    if(!metaElemContent.contains("http")) return metaElemContent;
-                } else if(metaElem.get().hasAttr("value")) {
-                    String metaElemContent = metaElem.get().attr("value").strip();
-                    if(!metaElemContent.contains("http")) return metaElemContent;
-                }
+            Optional<String> authorFromMeta = getOneByTagNameAndProperty(doc.head(), "meta", "name", value).stream()
+                    .filter((a) -> a.hasAttr("content") || a.hasAttr("value"))
+                    .map((a) -> a.hasAttr("content") ?
+                            a.attr("content").strip() : a.attr("value").strip())
+                    .filter((a) -> !a.contains("http"))
+                    .findAny();
+            if(authorFromMeta.isPresent()) {
+                return authorFromMeta.get();
             }
         }
+
+        
+
 
         return "";
     }
