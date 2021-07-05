@@ -157,7 +157,7 @@ public class ExtractService {
         if(matcherReverse.find()) {
             return matcher.group(0);
         }
-        
+
         List<String> elementSet = doc.select("[class*=\"date\"]")
                 .stream()
                 .filter((a) -> a.childrenSize() <= 1)
@@ -255,5 +255,28 @@ public class ExtractService {
             return Optional.empty();
         }
         return Optional.of(elemList.get(0));
+    }
+
+    public String extractAuthor(Document doc) {
+        final List<String> metaPropertyValues = Arrays.asList("article:author");
+        final List<String> metaNameValues = Arrays.asList("shareaholic:article_author_name", "byl",
+                "sailthru.author", "author");
+
+
+        for (String value : metaNameValues) {
+            Optional<Element> metaElem =
+                    getOneByTagNameAndProperty(doc.head(), "meta", "name", value);
+            if (metaElem.isPresent()) {
+                if(metaElem.get().hasAttr("content")) {
+                    String metaElemContent = metaElem.get().attr("content").strip();
+                    if(!metaElemContent.contains("http")) return metaElemContent;
+                } else if(metaElem.get().hasAttr("value")) {
+                    String metaElemContent = metaElem.get().attr("value").strip();
+                    if(!metaElemContent.contains("http")) return metaElemContent;
+                }
+            }
+        }
+
+        return "";
     }
 }
