@@ -262,28 +262,41 @@ public class ExtractService {
         final List<String> metaNameValues = Arrays.asList("shareaholic:article_author_name", "byl",
                 "sailthru.author", "author");
 
-        Optional<String> authorFromMetaName = metaNameValues.stream()
-                .map((a) -> getAuthorFromMeta(doc, a, "name"))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findAny();
-
+        Optional<String> authorFromMetaName = getAnyMetaValue(doc, metaNameValues, "name");
         if(authorFromMetaName.isPresent()) {
             return authorFromMetaName.get();
         }
 
-        Optional<String> authorFromMetaProperty = metaNameValues.stream()
-                .map((a) -> getAuthorFromMeta(doc, a, "property"))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findAny();
-
+        Optional<String> authorFromMetaProperty = getAnyMetaValue(doc, metaPropertyValues, "property");
         if(authorFromMetaProperty.isPresent()) {
-            return authorFromMetaName.get();
+            return authorFromMetaProperty.get();
+        }
+
+        Optional<Element> jsonld = getOneByTagNameAndProperty(doc,"script", "type", "application/ld+json");
+
+        if(jsonld.isPresent()) {
+
+        }
+
+       String authorLinks = getByTagNameAndProperty(doc, "a", "rel", "author").stream()
+                .map(Element::text)
+                .filter((a) -> !a.equals(""))
+                .collect(Collectors.joining(","));
+        if(authorLinks.length() > 0) {
+            return authorLinks;
         }
 
 
+
         return "";
+    }
+
+    private Optional<String> getAnyMetaValue(Document doc, List<String> metaNameValues, String name) {
+        return metaNameValues.stream()
+                .map((a) -> getAuthorFromMeta(doc, a, name))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findAny();
     }
 
     private Optional<String> getAuthorFromMeta(Document doc, String value, String name) {
