@@ -264,24 +264,14 @@ public class ExtractService {
 
 
         for (String value : metaNameValues) {
-            Optional<String> authorFromMeta = getOneByTagNameAndProperty(doc.head(), "meta", "name", value).stream()
-                    .filter((a) -> a.hasAttr("content") || a.hasAttr("value"))
-                    .map((a) -> a.hasAttr("content") ?
-                            a.attr("content").strip() : a.attr("value").strip())
-                    .filter((a) -> !a.contains("http"))
-                    .findAny();
+            Optional<String> authorFromMeta = getAuthorFromMeta(doc, value, "name");
             if(authorFromMeta.isPresent()) {
                 return authorFromMeta.get();
             }
         }
 
         for (String value : metaPropertyValues) {
-            Optional<String> authorFromMeta = getOneByTagNameAndProperty(doc.head(), "meta", "property", value).stream()
-                    .filter((a) -> a.hasAttr("content") || a.hasAttr("value"))
-                    .map((a) -> a.hasAttr("content") ?
-                            a.attr("content").strip() : a.attr("value").strip())
-                    .filter((a) -> !a.contains("http"))
-                    .findAny();
+            Optional<String> authorFromMeta = getAuthorFromMeta(doc, value, "property");
             if(authorFromMeta.isPresent()) {
                 return authorFromMeta.get();
             }
@@ -289,5 +279,14 @@ public class ExtractService {
 
 
         return "";
+    }
+
+    private Optional<String> getAuthorFromMeta(Document doc, String value, String name) {
+        return getOneByTagNameAndProperty(doc.head(), "meta", name, value).stream()
+                .filter((a) -> a.hasAttr("content") || a.hasAttr("value"))
+                .map((a) -> a.hasAttr("content") ?
+                        a.attr("content").strip() : a.attr("value").strip())
+                .filter((a) -> !a.contains("http"))
+                .findAny();
     }
 }
