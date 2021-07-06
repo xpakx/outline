@@ -265,7 +265,7 @@ public class ExtractService {
         return Optional.of(elemList.get(0));
     }
 
-    public String extractAuthor(Document doc) throws JsonProcessingException {
+    public String extractAuthor(Document doc) {
         final List<String> metaPropertyValues = List.of("article:author");
         final List<String> metaNameValues = Arrays.asList("shareaholic:article_author_name", "byl",
                 "sailthru.author", "author");
@@ -320,30 +320,38 @@ public class ExtractService {
         return "";
     }
 
-    private Optional<String> getAuthorsFromJsonLd(Document doc) throws JsonProcessingException {
+    private Optional<String> getAuthorsFromJsonLd(Document doc) {
         Optional<Element> jsonld = getOneByTagNameAndProperty(doc,"script", "type", "application/ld+json");
 
         if(jsonld.isPresent()) {
             ObjectMapper om = new JsonMapper();
             om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-            JsonLdAuthors multipleAuthors = om.readValue(jsonld.get().text(), JsonLdAuthors.class);
-            if (multipleAuthors.getAuthor() != null) {
-                String authors = multipleAuthors.getAuthor().stream()
-                        .map(Author::getName)
-                        .collect(Collectors.joining());
-                if(authors.length() > 0) return Optional.of(authors);
+            try {
+                JsonLdAuthors multipleAuthors = om.readValue(jsonld.get().text(), JsonLdAuthors.class);
+                if (multipleAuthors.getAuthor() != null) {
+                    String authors = multipleAuthors.getAuthor().stream()
+                            .map(Author::getName)
+                            .collect(Collectors.joining());
+                    if (authors.length() > 0) return Optional.of(authors);
+                }
+            } catch (JsonProcessingException ignored) {
+                return Optional.empty();
             }
 
-            JsonLdGraph graph = om.readValue(jsonld.get().text(), JsonLdGraph.class);
-            if(graph.getGraph() != null) {
-                String authors = graph.getGraph().stream()
-                        .filter((a) -> a.getType().contains("Person"))
-                        .map(GraphEntry::getName)
-                        .filter(Objects::nonNull)
-                        .filter((a) -> a.length() > 0)
-                        .collect(Collectors.joining());
-                if(authors.length() > 0) return Optional.of(authors);
+            try {
+                JsonLdGraph graph = om.readValue(jsonld.get().text(), JsonLdGraph.class);
+                if (graph.getGraph() != null) {
+                    String authors = graph.getGraph().stream()
+                            .filter((a) -> a.getType().contains("Person"))
+                            .map(GraphEntry::getName)
+                            .filter(Objects::nonNull)
+                            .filter((a) -> a.length() > 0)
+                            .collect(Collectors.joining());
+                    if (authors.length() > 0) return Optional.of(authors);
+                }
+            } catch (JsonProcessingException ignored) {
+                return Optional.empty();
             }
         }
         return Optional.empty();
