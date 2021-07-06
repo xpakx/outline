@@ -1,5 +1,12 @@
 package io.github.xpakx.outline.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.github.xpakx.outline.entity.dto.Author;
+import io.github.xpakx.outline.entity.dto.JsonLdAuthors;
+import io.github.xpakx.outline.entity.dto.JsonLdSingleAuthor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -257,7 +264,7 @@ public class ExtractService {
         return Optional.of(elemList.get(0));
     }
 
-    public String extractAuthor(Document doc) {
+    public String extractAuthor(Document doc) throws JsonProcessingException {
         final List<String> metaPropertyValues = List.of("article:author");
         final List<String> metaNameValues = Arrays.asList("shareaholic:article_author_name", "byl",
                 "sailthru.author", "author");
@@ -275,6 +282,20 @@ public class ExtractService {
         Optional<Element> jsonld = getOneByTagNameAndProperty(doc,"script", "type", "application/ld+json");
 
         if(jsonld.isPresent()) {
+            ObjectMapper om = new JsonMapper();
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            JsonLdSingleAuthor singleAuthor = om.readValue(jsonld.get().text(), JsonLdSingleAuthor.class);
+            if(singleAuthor.getAuthor() != null) {
+                return singleAuthor.getAuthor().getName();
+            }
+
+            JsonLdAuthors multipleAuthors = om.readValue(jsonld.get().text(), JsonLdAuthors.class);
+            String authors = multipleAuthors.getAuthor().stream()
+                    .map(Author::getName)
+                    .collect(Collectors.joining());
+            if(authors.length() > 0) {
+                return authors;
+            }
 
         }
 
