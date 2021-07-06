@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.github.xpakx.outline.entity.dto.Author;
 import io.github.xpakx.outline.entity.dto.JsonLdAuthors;
-import io.github.xpakx.outline.entity.dto.JsonLdGraph;
-import io.github.xpakx.outline.entity.dto.JsonLdSingleAuthor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -285,10 +283,6 @@ public class ExtractService {
         if(jsonld.isPresent()) {
             ObjectMapper om = new JsonMapper();
             om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            JsonLdSingleAuthor singleAuthor = om.readValue(jsonld.get().text(), JsonLdSingleAuthor.class);
-            if(singleAuthor.getAuthor() != null) {
-                return singleAuthor.getAuthor().getName();
-            }
 
             JsonLdAuthors multipleAuthors = om.readValue(jsonld.get().text(), JsonLdAuthors.class);
             String authors = multipleAuthors.getAuthor().stream()
