@@ -287,23 +287,24 @@ public class ExtractService {
             om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
             JsonLdAuthors multipleAuthors = om.readValue(jsonld.get().text(), JsonLdAuthors.class);
-            String authors = multipleAuthors.getAuthor().stream()
-                    .map(Author::getName)
-                    .collect(Collectors.joining());
-            if(authors.length() > 0) {
-                return authors;
+            if (multipleAuthors.getAuthor() != null) {
+                String authors = multipleAuthors.getAuthor().stream()
+                        .map(Author::getName)
+                        .collect(Collectors.joining());
+                if(authors.length() > 0) return authors;
             }
 
             JsonLdGraph graph = om.readValue(jsonld.get().text(), JsonLdGraph.class);
-            String graphAuthors = graph.getGraph().stream()
-                    .filter((a) -> a.getType().contains("Person"))
-                    .map(GraphEntry::getName)
-                    .filter(Objects::nonNull)
-                    .filter((a) -> a.length() > 0)
-                    .collect(Collectors.joining());
-            if(graphAuthors.length() > 0) {
-                return authors;
+            if(graph.getGraph() != null) {
+                String authors = graph.getGraph().stream()
+                        .filter((a) -> a.getType().contains("Person"))
+                        .map(GraphEntry::getName)
+                        .filter(Objects::nonNull)
+                        .filter((a) -> a.length() > 0)
+                        .collect(Collectors.joining());
+                if(authors.length() > 0) return authors;
             }
+
         }
 
        String authorLinks = getByTagNameAndProperty(doc, "a", "rel", "author").stream()
