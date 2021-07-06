@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.github.xpakx.outline.entity.dto.Author;
+import io.github.xpakx.outline.entity.dto.GraphEntry;
 import io.github.xpakx.outline.entity.dto.JsonLdAuthors;
+import io.github.xpakx.outline.entity.dto.JsonLdGraph;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -292,7 +294,16 @@ public class ExtractService {
                 return authors;
             }
 
-
+            JsonLdGraph graph = om.readValue(jsonld.get().text(), JsonLdGraph.class);
+            String graphAuthors = graph.getGraph().stream()
+                    .filter((a) -> a.getType().contains("Person"))
+                    .map(GraphEntry::getName)
+                    .filter(Objects::nonNull)
+                    .filter((a) -> a.length() > 0)
+                    .collect(Collectors.joining());
+            if(graphAuthors.length() > 0) {
+                return authors;
+            }
         }
 
        String authorLinks = getByTagNameAndProperty(doc, "a", "rel", "author").stream()
