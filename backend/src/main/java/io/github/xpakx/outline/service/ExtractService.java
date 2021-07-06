@@ -288,15 +288,22 @@ public class ExtractService {
             return authorLinks.get();
         }
 
+        Optional<String> authorElemContent = getAuthorsFromTagsWithClassContainingAuthor(doc);
+        if (authorElemContent.isPresent()) return authorElemContent.get();
+
+        return "";
+    }
+
+    private Optional<String> getAuthorsFromTagsWithClassContainingAuthor(Document doc) {
         Element authorElem = doc.selectFirst("[class*=\"author\"]");
         if(authorElem != null) {
             List<Element> children = authorElem.children();
             if(children.size() == 0) {
                 String authorElemContent = authorElem.text().strip();
-                if(authorElemContent.length() > MIN_LENGTH) return authorElemContent;
+                if(authorElemContent.length() > MIN_LENGTH) return Optional.of(authorElemContent);
             } else if(children.size() == 1 && children.get(0).childrenSize() == 0) {
                 String authorElemContent = children.get(0).text().strip();
-                if(authorElemContent.length() > MIN_LENGTH) return authorElemContent;
+                if(authorElemContent.length() > MIN_LENGTH) return Optional.of(authorElemContent);
             }
 
             List<Element> nameElements = authorElem.select("[class*=\"name\"]");
@@ -310,11 +317,10 @@ public class ExtractService {
                     .distinct()
                     .collect(Collectors.joining());
             if(authorsFromNameElements.length() > 0) {
-                return authorsFromNameElements;
+                return Optional.of(authorsFromNameElements);
             }
         }
-
-        return "";
+        return Optional.empty();
     }
 
     private Optional<String> getAuthorsFromLinkRels(Document doc) {
