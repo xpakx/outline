@@ -280,34 +280,10 @@ public class ExtractService {
             return authorFromMetaProperty.get();
         }
 
-        Optional<Element> jsonld = getOneByTagNameAndProperty(doc,"script", "type", "application/ld+json");
+        Optional<String> authors = getAuthorsFromJsonLd(doc);
+        if (authors.isPresent()) return authors.get();
 
-        if(jsonld.isPresent()) {
-            ObjectMapper om = new JsonMapper();
-            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-            JsonLdAuthors multipleAuthors = om.readValue(jsonld.get().text(), JsonLdAuthors.class);
-            if (multipleAuthors.getAuthor() != null) {
-                String authors = multipleAuthors.getAuthor().stream()
-                        .map(Author::getName)
-                        .collect(Collectors.joining());
-                if(authors.length() > 0) return authors;
-            }
-
-            JsonLdGraph graph = om.readValue(jsonld.get().text(), JsonLdGraph.class);
-            if(graph.getGraph() != null) {
-                String authors = graph.getGraph().stream()
-                        .filter((a) -> a.getType().contains("Person"))
-                        .map(GraphEntry::getName)
-                        .filter(Objects::nonNull)
-                        .filter((a) -> a.length() > 0)
-                        .collect(Collectors.joining());
-                if(authors.length() > 0) return authors;
-            }
-
-        }
-
-       String authorLinks = getByTagNameAndProperty(doc, "a", "rel", "author").stream()
+        String authorLinks = getByTagNameAndProperty(doc, "a", "rel", "author").stream()
                 .map(Element::text)
                 .filter((a) -> !a.equals(""))
                 .collect(Collectors.joining(","));
@@ -341,9 +317,36 @@ public class ExtractService {
             }
         }
 
-
-
         return "";
+    }
+
+    private Optional<String> getAuthorsFromJsonLd(Document doc) throws JsonProcessingException {
+        Optional<Element> jsonld = getOneByTagNameAndProperty(doc,"script", "type", "application/ld+json");
+
+        if(jsonld.isPresent()) {
+            ObjectMapper om = new JsonMapper();
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            JsonLdAuthors multipleAuthors = om.readValue(jsonld.get().text(), JsonLdAuthors.class);
+            if (multipleAuthors.getAuthor() != null) {
+                String authors = multipleAuthors.getAuthor().stream()
+                        .map(Author::getName)
+                        .collect(Collectors.joining());
+                if(authors.length() > 0) return Optional.of(authors);
+            }
+
+            JsonLdGraph graph = om.readValue(jsonld.get().text(), JsonLdGraph.class);
+            if(graph.getGraph() != null) {
+                String authors = graph.getGraph().stream()
+                        .filter((a) -> a.getType().contains("Person"))
+                        .map(GraphEntry::getName)
+                        .filter(Objects::nonNull)
+                        .filter((a) -> a.length() > 0)
+                        .collect(Collectors.joining());
+                if(authors.length() > 0) return Optional.of(authors);
+            }
+        }
+        return Optional.empty();
     }
 
     private Optional<String> getAnyMetaValue(Document doc, List<String> metaNameValues, String name) {
