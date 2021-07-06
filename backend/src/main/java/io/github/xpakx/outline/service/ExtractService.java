@@ -283,12 +283,9 @@ public class ExtractService {
         Optional<String> authors = getAuthorsFromJsonLd(doc);
         if (authors.isPresent()) return authors.get();
 
-        String authorLinks = getByTagNameAndProperty(doc, "a", "rel", "author").stream()
-                .map(Element::text)
-                .filter((a) -> !a.equals(""))
-                .collect(Collectors.joining(","));
-        if(authorLinks.length() > 0) {
-            return authorLinks;
+        Optional<String> authorLinks = getAuthorsFromLinkRels(doc);
+        if(authorLinks.isPresent()) {
+            return authorLinks.get();
         }
 
         Element authorElem = doc.selectFirst("[class*=\"author\"]");
@@ -313,11 +310,20 @@ public class ExtractService {
                     .distinct()
                     .collect(Collectors.joining());
             if(authorsFromNameElements.length() > 0) {
-                return authorLinks;
+                return authorsFromNameElements;
             }
         }
 
         return "";
+    }
+
+    private Optional<String> getAuthorsFromLinkRels(Document doc) {
+        String authors = getByTagNameAndProperty(doc, "a", "rel", "author").stream()
+                .map(Element::text)
+                .filter((a) -> !a.equals(""))
+                .collect(Collectors.joining(","));
+        if(authors.length() > 0) return Optional.of((authors));
+        else return Optional.empty();
     }
 
     private Optional<String> getAuthorsFromJsonLd(Document doc) {
