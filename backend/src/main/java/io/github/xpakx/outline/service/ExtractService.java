@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.github.xpakx.outline.entity.dto.Author;
 import io.github.xpakx.outline.entity.dto.JsonLdAuthors;
+import io.github.xpakx.outline.entity.dto.JsonLdGraph;
 import io.github.xpakx.outline.entity.dto.JsonLdSingleAuthor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -296,6 +297,7 @@ public class ExtractService {
             if(authors.length() > 0) {
                 return authors;
             }
+
 
         }
 
