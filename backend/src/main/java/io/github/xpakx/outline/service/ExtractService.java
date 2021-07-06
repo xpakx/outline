@@ -270,28 +270,15 @@ public class ExtractService {
         final List<String> metaNameValues = Arrays.asList("shareaholic:article_author_name", "byl",
                 "sailthru.author", "author");
 
-        Optional<String> authorFromMetaName = getAnyMetaValue(doc, metaNameValues, "name");
-        if(authorFromMetaName.isPresent()) {
-            return authorFromMetaName.get();
-        }
-
-        Optional<String> authorFromMetaProperty = getAnyMetaValue(doc, metaPropertyValues, "property");
-        if(authorFromMetaProperty.isPresent()) {
-            return authorFromMetaProperty.get();
-        }
-
-        Optional<String> authors = getAuthorsFromJsonLd(doc);
-        if (authors.isPresent()) return authors.get();
-
-        Optional<String> authorLinks = getAuthorsFromLinkRels(doc);
-        if(authorLinks.isPresent()) {
-            return authorLinks.get();
-        }
-
-        Optional<String> authorElemContent = getAuthorsFromTagsWithClassContainingAuthor(doc);
-        if (authorElemContent.isPresent()) return authorElemContent.get();
-
-        return "";
+        return getAnyMetaValue(doc, metaNameValues, "name").orElse(
+                getAnyMetaValue(doc, metaPropertyValues, "property").orElse(
+                        getAuthorsFromJsonLd(doc).orElse(
+                                getAuthorsFromLinkRels(doc).orElse(
+                                        getAuthorsFromTagsWithClassContainingAuthor(doc).orElse("")
+                                )
+                        )
+                )
+        );
     }
 
     private Optional<String> getAuthorsFromTagsWithClassContainingAuthor(Document doc) {
