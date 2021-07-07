@@ -111,24 +111,24 @@ public class ExtractService {
     }
 
 
-    public String extractContent(Document doc) {
+    public Element extractContent(Document doc) {
         doc.getElementsByTag("script")
                         .forEach(Node::remove);
 
         List<Element> articles = doc.getElementsByTag("article");
         if(articles.size() == 1 && articles.get(0).text().length() > 250) {
-            return articles.get(0).html();
+            return articles.get(0);
         }
 
         List<Element> contentElems = doc.select("[class*=\"content\"]");
         if(contentElems.size() == 1) {
-            return contentElems.get(0).html();
+            return contentElems.get(0);
         }
 
         Optional<Element> parentContentElem = contentElems.stream()
                 .filter((a) -> a.select("[class*=\"content\"]").size() + 1 == contentElems.size())
                 .findAny();
-        if(parentContentElem.isPresent()) return parentContentElem.get().html();
+        if(parentContentElem.isPresent()) return parentContentElem.get();
 
         List<Element> filteredContentElems = contentElems.stream()
                 .filter((a) -> a.text().length() > 250)
@@ -141,10 +141,14 @@ public class ExtractService {
         if(filteredContentElems.size() > 0) {
             filteredContentElems
                     .forEach(content::appendChild);
-            return content.html();
+            return content;
         }
 
-        return doc.body().html();
+        return doc.body();
+    }
+
+    public String postprocessContent(Element doc) {
+        return doc.html();
     }
 
     public String extractDate(Document doc, URL url) {

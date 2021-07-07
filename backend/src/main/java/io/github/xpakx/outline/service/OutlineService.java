@@ -49,7 +49,11 @@ public class OutlineService {
             URL url = new URL(request.getUrl());
             Document pageDocument = extractService.parse(pageContent);
             newLink.setTitle(extractService.extractTitle(pageDocument, url));
-            newLink.setContent(extractService.extractContent(pageDocument));
+            newLink.setContent(
+                    extractService.postprocessContent(
+                            extractService.extractContent(pageDocument)
+                    )
+            );
             newLink.setDate(extractService.extractDate(pageDocument, url));
             newLink.setAuthor(extractService.extractAuthor(pageDocument));
         } catch(IOException ex) {
