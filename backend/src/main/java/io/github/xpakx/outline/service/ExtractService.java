@@ -12,6 +12,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.jsoup.parser.Tag;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
@@ -129,10 +130,21 @@ public class ExtractService {
                 .findAny();
         if(parentContentElem.isPresent()) return parentContentElem.get().html();
 
+        List<Element> filteredContentElems = contentElems.stream()
+                .filter((a) -> a.text().length() > 250)
+                .filter((a) -> !a.attr("class").contains("comment"))
+                .filter((a) -> a.parents().stream()
+                        .noneMatch((b) -> b.attr("class").contains("content")))
+                .collect(Collectors.toList());
 
+        Element content = new Element(Tag.valueOf("div"), "");
+        if(filteredContentElems.size() > 0) {
+            filteredContentElems
+                    .forEach(content::appendChild);
+            return content.html();
+        }
 
-
-        return doc.body().text();
+        return doc.body().html();
     }
 
     public String extractDate(Document doc, URL url) {
