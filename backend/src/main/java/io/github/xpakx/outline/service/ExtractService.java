@@ -127,9 +127,9 @@ public class ExtractService {
         Optional<Element> parentContentElem = contentElems.stream()
                 .filter((a) -> a.select("[class*=\"content\"]").size() + 1 == contentElems.size())
                 .findAny();
-        if(parentContentElem.isPresent()) return parentContentElem.get();
+        if(parentContentElem.isPresent()) return parentContentElem.get().html();
 
-        
+
 
 
         return doc.body().text();
