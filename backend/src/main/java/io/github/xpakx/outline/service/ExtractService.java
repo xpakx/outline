@@ -148,6 +148,16 @@ public class ExtractService {
     }
 
     public String postprocessContent(Element doc) {
+        doc.getElementsByTag("style")
+                .forEach(Node::remove);
+        doc.getElementsByTag("nav")
+                .forEach(Node::remove);
+        doc.select("[class*=\"comment\"]")
+                .forEach(Node::remove);
+        doc.select("[aria-label*=\"share\"]")
+                .forEach(Node::remove);
+        doc.select("[aria-label*=\"Share\"]")
+                .forEach(Node::remove);
         return doc.html();
     }
 
