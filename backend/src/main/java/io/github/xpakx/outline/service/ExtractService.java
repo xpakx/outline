@@ -119,6 +119,11 @@ public class ExtractService {
             return articles.get(0).html();
         }
 
+        List<Element> contentElems = doc.select("[class*=\"content\"]");
+        if(contentElems.size() == 1) {
+            return contentElems.get(0).html();
+        }
+        
         return doc.body().text();
     }
 
