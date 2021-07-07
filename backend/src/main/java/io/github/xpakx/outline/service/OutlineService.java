@@ -51,8 +51,9 @@ public class OutlineService {
             newLink.setTitle(extractService.extractTitle(pageDocument, url));
             newLink.setContent(extractService.extractContent(pageDocument));
             newLink.setDate(extractService.extractDate(pageDocument, url));
+            newLink.setAuthor(extractService.extractAuthor(pageDocument));
         } catch(IOException ex) {
-            throw new UrlLoadingException("Parsing error" + ex.getMessage());
+            throw new UrlLoadingException("Malformed url!");
         }
 
 
