@@ -158,6 +158,7 @@ public class ExtractService {
                 .forEach(Node::remove);
         doc.select("[aria-label*=\"Share\"]")
                 .forEach(Node::remove);
+
         final List<String> attributesList = Arrays.asList("class", "id");
         final List<String> valuesList = Arrays.asList("sidebar", "nav", "recomm",
                 "menu", "footer", "header", "bottom", "top", "sponsor", "widget");
@@ -166,7 +167,10 @@ public class ExtractService {
                 String selector = "[" + attr + "*=\"" + val + "\"]";
                 List<Element> elems = doc.select(selector);
                 elems.stream()
-                        .filter((a) -> a.text().length() < 100)
+                        .filter((a) -> a.text()
+                                .replace(" ", "")
+                                .replace("\n", "")
+                                .length() < 100)
                         .forEach(Node::remove);
             }
         }
