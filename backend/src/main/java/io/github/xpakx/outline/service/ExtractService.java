@@ -11,6 +11,7 @@ import io.github.xpakx.outline.entity.dto.JsonLdGraph;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
@@ -110,6 +111,14 @@ public class ExtractService {
 
 
     public String extractContent(Document doc) {
+        doc.getElementsByTag("script")
+                        .forEach(Node::remove);
+
+        List<Element> articles = doc.getElementsByTag("article");
+        if(articles.size() == 1 && articles.get(0).text().length() > 250) {
+            return articles.get(0).html();
+        }
+
         return doc.body().text();
     }
 
