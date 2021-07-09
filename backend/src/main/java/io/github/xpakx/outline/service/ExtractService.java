@@ -95,14 +95,15 @@ public class ExtractService {
 
     private Optional<String> splitTitle(String titleContent) {
         List<String> splitters = Arrays.asList("|", "_", " » ", "/", " - ");
-        for(String splitter : splitters) {
-            if(titleContent.contains(splitter)) {
-                List<String> splitTitles = Arrays.asList(titleContent.split(splitter));
-                splitTitles.sort(Comparator.comparingInt(String::length).reversed());
-                return Optional.of(splitTitles.get(0));
-            }
-        }
-        return Optional.empty();
+        return splitters.stream()
+                .filter(titleContent::contains)
+                .map((a) -> Arrays.asList(titleContent.split(a)))
+                .map((a) -> a.stream()
+                        .max(Comparator.comparingInt(String::length))
+                )
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findAny();
     }
 
 
