@@ -226,14 +226,7 @@ public class ExtractService {
             return matcher.group(0);
         }
 
-        List<String> elementSet = doc.select("[class*=\"date\"]")
-                .stream()
-                .filter((a) -> a.childrenSize() <= 1)
-                .map((a) -> a.childrenSize() == 1 ? a.children().get(0) : a)
-                .map((a) -> a.text().strip())
-                .filter((a) -> a.length() > MIN_LENGTH)
-                .distinct()
-                .collect(Collectors.toList());
+        List<String> elementSet = getDatesFromTagsWithClassContainingDate(doc);
 
         if(elementSet.size() == 1) {
             return elementSet.stream()
@@ -295,6 +288,17 @@ public class ExtractService {
         }
 
         return year.equals("") ? "" : year + "/" + month;
+    }
+
+    private List<String> getDatesFromTagsWithClassContainingDate(Document doc) {
+        return doc.select("[class*=\"date\"]")
+                .stream()
+                .filter((a) -> a.childrenSize() <= 1)
+                .map((a) -> a.childrenSize() == 1 ? a.children().get(0) : a)
+                .map((a) -> a.text().strip())
+                .filter((a) -> a.length() > MIN_LENGTH)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     private Optional<String> getDateFromMeta(Document doc, List<String> metaValues, String property) {
