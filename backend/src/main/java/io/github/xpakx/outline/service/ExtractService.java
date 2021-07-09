@@ -315,11 +315,8 @@ public class ExtractService {
     }
 
     private Optional<Element> getOneByTagNameAndProperty(Element element, String tag, String property, String value) {
-        List<Element> elemList = getByTagNameAndProperty(element, tag, property, value);
-        if(elemList.size() == 0) {
-            return Optional.empty();
-        }
-        return Optional.of(elemList.get(0));
+        return getByTagNameAndProperty(element, tag, property, value).stream()
+                .findFirst();
     }
 
     public String extractAuthor(Document doc) {
