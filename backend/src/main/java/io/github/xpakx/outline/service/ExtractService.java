@@ -274,8 +274,8 @@ public class ExtractService {
         Matcher matcherHtmlReversed = patternReverse.matcher(stringDoc);
         while(matcherHtmlReversed.find()) {
             if(year.length() > 0) {
-                if(year.substring(0,4).equals(matcherHtml.group(4)) &&
-                        month.substring(4,6).equals(matcherHtml.group(3))) {
+                if(year.equals(matcherHtml.group(4)) &&
+                        month.equals(matcherHtml.group(3))) {
                     datesFromHtml.add(matcherHtml.group(4)+"/"+matcherHtml.group(3)+"/"+matcherHtml.group(1));
                 }
             } else {
