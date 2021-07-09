@@ -50,13 +50,12 @@ public class ExtractService {
         List<String> candidates = Arrays.asList(path.split("/"));
         Collections.reverse(candidates);
         String regex = "\\d+";
-        for(String candidate : candidates) {
-            if(candidate.length() > MIN_LENGTH && !candidate.matches(regex)) {
-                candidate = candidate.replace("-", " ");
-                return candidate.split("\\.")[0];
-            }
-        }
-        return "";
+        return candidates.stream()
+                .filter((a) -> a.length() > MIN_LENGTH && !a.matches(regex))
+                .map((a) -> a.replace("-", " "))
+                .map((a) -> a.split("\\.")[0])
+                .findAny()
+                .orElse("");
     }
 
     private Optional<String> getTitleFromH1s(Document doc, String titleContent) {
