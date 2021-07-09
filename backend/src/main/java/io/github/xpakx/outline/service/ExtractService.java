@@ -298,17 +298,14 @@ public class ExtractService {
     }
 
     private Optional<String> getDateFromMeta(Document doc, List<String> metaValues, String property) {
-        for (String value : metaValues) {
-            Optional<Element> metaElem =
-                    getOneByTagNameAndProperty(doc.head(), "meta", property, value);
-            if (metaElem.isPresent()) {
-                String metaElemContent = metaElem.get().attr("content").strip();
-                if (metaElemContent.length() > 0) {
-                    return Optional.of(metaElemContent);
-                }
-            }
-        }
-        return Optional.empty();
+        return metaValues.stream()
+                .map((a) -> getOneByTagNameAndProperty(doc.head(), "meta", property, a))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter((a) -> a.hasAttr("content"))
+                .map((a) -> a.attr("content").strip())
+                .filter((a) -> a.length() > 0)
+                .findAny();
     }
 
     private List<Element> getByTagNameAndProperty(Element element, String tag, String property, String value) {
@@ -375,8 +372,7 @@ public class ExtractService {
                 .map(Element::text)
                 .filter((a) -> !a.equals(""))
                 .collect(Collectors.joining(","));
-        if(authors.length() > 0) return Optional.of((authors));
-        else return Optional.empty();
+        return authors.length() > 0 ? Optional.of((authors)) : Optional.empty();
     }
 
     private Optional<String> getAuthorsFromJsonLd(Document doc) {
