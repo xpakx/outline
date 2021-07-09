@@ -83,18 +83,14 @@ public class ExtractService {
     private Optional<String> getTitleFromMetaTags(Document doc, String titleContent) {
         List<String> metaAttrs = Arrays.asList("property", "name");
 
-        for(String attr : metaAttrs) {
-            Optional<Element> metaElem =
-                    getOneByTagNameAndProperty(doc.head(), "meta", attr, "og:title");
-            if (metaElem.isPresent()) {
-                String metaElemContent = metaElem.get().attr("content").strip();
-                if (metaElemContent.length() > MIN_LENGTH && titleContent.contains(metaElemContent) && metaElemContent.length() < titleContent.length()) {
-                    return Optional.of(metaElemContent);
-                }
-            }
-        }
-
-        return Optional.empty();
+        return metaAttrs.stream()
+                .map((a) -> getOneByTagNameAndProperty(doc.head(), "meta", a, "og:title"))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter((a) -> a.hasAttr("content"))
+                .map((a) -> a.attr("content").strip())
+                .filter((a) -> a.length() > MIN_LENGTH && titleContent.contains(a) && a.length() < titleContent.length())
+                .findAny();
     }
 
     private Optional<String> splitTitle(String titleContent) {
