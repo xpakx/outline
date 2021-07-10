@@ -6,12 +6,10 @@ import io.github.xpakx.outline.entity.dto.OutlineRequest;
 import io.github.xpakx.outline.error.NotFoundException;
 import io.github.xpakx.outline.error.UrlLoadingException;
 import io.github.xpakx.outline.repo.LinkRepository;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.jsoup.nodes.Document;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -59,8 +57,6 @@ public class OutlineService {
         } catch(IOException ex) {
             throw new UrlLoadingException("Malformed url!");
         }
-
-
 
         return linkService.encode(
                 linkRepository
