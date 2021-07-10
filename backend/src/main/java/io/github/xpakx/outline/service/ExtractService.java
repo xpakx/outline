@@ -379,12 +379,8 @@ public class ExtractService {
         if(jsonld.isPresent()) {
             ObjectMapper om = new JsonMapper();
             om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-            Optional<String> authors = getAuthorFromJsonLdWithoutGraph(jsonld.get(), om);
-            if (authors.isPresent()) return authors;
-
-            Optional<String> authors1 = getAuthorFromJsonLdWithGraph(jsonld.get(), om);
-            if (authors1.isPresent()) return authors1;
+            return getAuthorFromJsonLdWithoutGraph(jsonld.get(), om)
+                    .or(() -> getAuthorFromJsonLdWithGraph(jsonld.get(), om));
         }
 
         return Optional.empty();
