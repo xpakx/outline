@@ -80,7 +80,6 @@ public class ExtractService {
 
     private Optional<String> getTitleFromMetaTags(Document doc, String titleContent) {
         List<String> metaAttrs = Arrays.asList("property", "name");
-
         return metaAttrs.stream()
                 .map((a) -> getOneByTagNameAndProperty(doc.head(), "meta", a, "og:title"))
                 .filter(Optional::isPresent)
@@ -381,32 +380,45 @@ public class ExtractService {
             ObjectMapper om = new JsonMapper();
             om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-            try {
-                JsonLdAuthors multipleAuthors = om.readValue(jsonld.get().text(), JsonLdAuthors.class);
-                if (multipleAuthors.getAuthor() != null) {
-                    String authors = multipleAuthors.getAuthor().stream()
-                            .map(Author::getName)
-                            .collect(Collectors.joining());
-                    if (authors.length() > 0) return Optional.of(authors);
-                }
-            } catch (JsonProcessingException ignored) {
-                return Optional.empty();
-            }
+            Optional<String> authors = getAuthorFromJsonLdWithoutGraph(jsonld.get(), om);
+            if (authors.isPresent()) return authors;
 
-            try {
-                JsonLdGraph graph = om.readValue(jsonld.get().text(), JsonLdGraph.class);
-                if (graph.getGraph() != null) {
-                    String authors = graph.getGraph().stream()
-                            .filter((a) -> a.getType().contains("Person"))
-                            .map(GraphEntry::getName)
-                            .filter(Objects::nonNull)
-                            .filter((a) -> a.length() > 0)
-                            .collect(Collectors.joining());
-                    if (authors.length() > 0) return Optional.of(authors);
-                }
-            } catch (JsonProcessingException ignored) {
-                return Optional.empty();
+            Optional<String> authors1 = getAuthorFromJsonLdWithGraph(jsonld.get(), om);
+            if (authors1.isPresent()) return authors1;
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<String> getAuthorFromJsonLdWithGraph(Element jsonld, ObjectMapper om) {
+        try {
+            JsonLdGraph graph = om.readValue(jsonld.text(), JsonLdGraph.class);
+            if (graph.getGraph() != null) {
+                String authors = graph.getGraph().stream()
+                        .filter((a) -> a.getType().contains("Person"))
+                        .map(GraphEntry::getName)
+                        .filter(Objects::nonNull)
+                        .filter((a) -> a.length() > 0)
+                        .collect(Collectors.joining());
+                if (authors.length() > 0) return Optional.of(authors);
             }
+        } catch (JsonProcessingException ignored) {
+            return Optional.empty();
+        }
+        return Optional.empty();
+    }
+
+    private Optional<String> getAuthorFromJsonLdWithoutGraph(Element jsonld, ObjectMapper om) {
+        try {
+            JsonLdAuthors multipleAuthors = om.readValue(jsonld.text(), JsonLdAuthors.class);
+            if (multipleAuthors.getAuthor() != null) {
+                String authors = multipleAuthors.getAuthor().stream()
+                        .map(Author::getName)
+                        .collect(Collectors.joining());
+                if (authors.length() > 0) return Optional.of(authors);
+            }
+        } catch (JsonProcessingException ignored) {
+            return Optional.empty();
         }
         return Optional.empty();
     }
