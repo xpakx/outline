@@ -58,26 +58,24 @@ public class ExtractService {
                 .orElse("");
     }
 
-    private Optional<String> getTitleFromH1s(Document doc, String titleContent) {
-        List<Element> h1Elems = doc.getElementsByTag("h1");
-        List<String> h1Candidates = new ArrayList<>();
+    private Optional<String> getTitleFromH1s(Document doc, final String titleContent) {
+        final List<Element> h1Elems = doc.getElementsByTag("h1");
+        return getFirstElemEqualTitle(titleContent, h1Elems)
+                .or(() -> findLongestElemContainedInTitle(titleContent, h1Elems));
+    }
 
-        for(Element elem : h1Elems) {
-            String h1Title = elem.text().strip();
-            if(h1Title.equalsIgnoreCase(titleContent)) {
-                return Optional.of(titleContent);
-            }
-            if(h1Title.length() > MIN_LENGTH && titleContent.contains(h1Title)) {
-                h1Candidates.add(h1Title);
-            }
-        }
+    private Optional<String> findLongestElemContainedInTitle(String titleContent, List<Element> h1Elems) {
+        return h1Elems.stream()
+                .map((a) -> a.text().strip())
+                .filter((a) -> a.length() > MIN_LENGTH && titleContent.contains(a))
+                .max(Comparator.comparingInt(String::length));
+    }
 
-        if(h1Candidates.size() > 0) {
-            h1Candidates.sort(Comparator.comparingInt(String::length).reversed());
-            return Optional.of(h1Candidates.get(0));
-        }
-
-        return Optional.empty();
+    private Optional<String> getFirstElemEqualTitle(String titleContent, List<Element> h1Elems) {
+        return h1Elems.stream()
+                .map((a) -> a.text().strip())
+                .filter((a) -> a.equalsIgnoreCase(titleContent))
+                .findFirst();
     }
 
     private Optional<String> getTitleFromMetaTags(Document doc, String titleContent) {
