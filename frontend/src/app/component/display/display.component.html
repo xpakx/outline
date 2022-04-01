@@ -1,4 +1,16 @@
-<div *ngIf="page">
+<div *ngIf="page" class="article-container">
+    <div class="article-header">
+        <div class="attribution">
+            <span class="publication">
+                Publisher 
+                <a [href]="page.longUrl" target="_blank">›</a>
+            </span>
+        </div>
+        <div class="actions">
+            <button class="action-btn">MD</button>
+            <button class="action-btn">Annotations</button>
+        </div>
+    </div>
     <h1>{{ page.title }}</h1>
     <div>
         <span class="author">{{ page.author }}</span> at <span class="author">{{ page.date }}</span>
