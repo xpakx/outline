@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+
+.markdown img {
+    max-width: 50%;
+    margin: auto;
+}
+
+.markdown a {
+    color: #61a4ad;
+    text-decoration: none;
+}
+
+.markdown a:hover {
+    text-decoration: underline;
+    text-decoration-style: dashed;
+}
