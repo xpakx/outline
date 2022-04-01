@@ -46,6 +46,8 @@ public class MarkdownVisitor implements NodeVisitor {
             builder.append("`");
         } else if(isListElem(element)) {
             builder.append(" ".repeat(listDepth)).append("* ");
+        } else if(isLink(element)) {
+            builder.append("[");
         }
     }
 
@@ -62,6 +64,10 @@ public class MarkdownVisitor implements NodeVisitor {
                 element.tagName().equals("h2") ||
                 element.tagName().equals("h3")||
                 element.tagName().equals("h4");
+    }
+
+    private boolean isLink(Element element) {
+        return element.tagName().equals("a");
     }
 
     private boolean isList(Element element) {
@@ -112,7 +118,17 @@ public class MarkdownVisitor implements NodeVisitor {
             builder.append("`");
         } else if(isListElem(element)) {
             builder.append("\n");
+        } else if(isLink(element)) {
+            String href = element.attr("href");
+            builder.append("]");
+            if(href != null) {
+                builder.append("(").append(getUri(href)).append(")");
+            }
         }
+    }
+
+    private String getUri(String href) {
+        return href.contains("://") ? href : "";
     }
 
     public String getResult() {
