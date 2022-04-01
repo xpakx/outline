@@ -1,10 +1,16 @@
-<h1>Outliner</h1>
-<div>Read articles without distraction</div>
-<form class="form" [formGroup]="form">
-    <label for="search">Name</label>
-    <input autofocus placeholder="" id="search" formControlName="search">
-</form>
-<button (click)="generateOutline()">
-    Outline!
-</button>
-<div>See an example</div>
+<div class="start-container">
+    <div class="title-container">
+        <h1>Outliner</h1>
+        <div class="subtitle">Read articles without distraction</div>
+    </div>
+    <div class="form-container">
+        <form class="form" [formGroup]="form">
+            <label for="search">Enter article url</label>
+            <input autofocus placeholder="" id="search" formControlName="search">
+        </form>
+        <button (click)="generateOutline()">
+            Outline!
+        </button>
+    </div>
+    <div class="example">See an example ›</div>
+</div>
