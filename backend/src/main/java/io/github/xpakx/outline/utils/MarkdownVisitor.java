@@ -48,6 +48,14 @@ public class MarkdownVisitor implements NodeVisitor {
             builder.append(" ".repeat(listDepth)).append("* ");
         } else if(isLink(element)) {
             builder.append("[");
+        } else if(isImage(element)) {
+            String src = element.attr("src");
+            String alt = element.attr("alt");
+            alt = alt != null ? alt : "";
+            if(src != null && src.length()>0) {
+                builder.append("![").append(alt).append("]")
+                        .append("(").append(getUri(src)).append(")\n");
+            }
         }
     }
 
@@ -92,6 +100,10 @@ public class MarkdownVisitor implements NodeVisitor {
 
     private boolean isBlock(Element element) {
         return element.tagName().equals("br") || element.tagName().equals("p") || element.tagName().equals("div");
+    }
+
+    private boolean isImage(Element element) {
+        return element.tagName().equals("img");
     }
 
     @Override
