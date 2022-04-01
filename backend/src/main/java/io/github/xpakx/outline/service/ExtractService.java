@@ -8,11 +8,13 @@ import io.github.xpakx.outline.entity.dto.Author;
 import io.github.xpakx.outline.entity.dto.GraphEntry;
 import io.github.xpakx.outline.entity.dto.JsonLdAuthors;
 import io.github.xpakx.outline.entity.dto.JsonLdGraph;
+import io.github.xpakx.outline.utils.MarkdownVisitor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.parser.Tag;
+import org.jsoup.select.NodeTraversor;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
@@ -167,7 +169,9 @@ public class ExtractService {
                         .forEach(Node::remove);
             }
         }
-        return doc.html();
+        MarkdownVisitor visitor = new MarkdownVisitor();
+        NodeTraversor.traverse(visitor, doc);
+        return visitor.getResult();
     }
 
     public String extractDate(Document doc, URL url) {
