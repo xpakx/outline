@@ -3,6 +3,7 @@ package io.github.xpakx.outline.service;
 import io.github.xpakx.outline.entity.Link;
 import io.github.xpakx.outline.entity.dto.LinkDto;
 import io.github.xpakx.outline.entity.dto.OutlineRequest;
+import io.github.xpakx.outline.entity.dto.OutlineResponse;
 import io.github.xpakx.outline.error.NotFoundException;
 import io.github.xpakx.outline.error.UrlLoadingException;
 import io.github.xpakx.outline.repo.LinkRepository;
@@ -29,7 +30,7 @@ public class OutlineService {
         this.extractService = extractService;
     }
 
-    public String addLink(OutlineRequest request) {
+    public OutlineResponse addLink(OutlineRequest request) {
         Link newLink = new Link();
         newLink.setLongUrl(request.getUrl());
 
@@ -58,11 +59,14 @@ public class OutlineService {
             throw new UrlLoadingException("Malformed url!");
         }
 
-        return linkService.encode(
+        String shortUrl = linkService.encode(
                 linkRepository
                         .save(newLink)
                         .getId()
         );
+        OutlineResponse response = new OutlineResponse();
+        response.setShortUrl(shortUrl);
+        return response;
     }
 
     public LinkDto getLink(String shortUrl) {

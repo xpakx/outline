@@ -2,6 +2,7 @@ package io.github.xpakx.outline.controller;
 
 import io.github.xpakx.outline.entity.dto.LinkDto;
 import io.github.xpakx.outline.entity.dto.OutlineRequest;
+import io.github.xpakx.outline.entity.dto.OutlineResponse;
 import io.github.xpakx.outline.service.OutlineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +19,7 @@ public class MainController {
 
     @PostMapping("/outline")
     @ResponseBody
-    public String addLink(@RequestBody OutlineRequest request) {
+    public OutlineResponse addLink(@RequestBody OutlineRequest request) {
         return outlineService.addLink(request);
     }
 
