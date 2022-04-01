@@ -77,7 +77,7 @@ public class MarkdownVisitor implements NodeVisitor {
     }
 
     private boolean isCursive(Element element) {
-        return element.tagName().equals("i") || element.tagName().equals("u") || element.tagName().equals("cite");
+        return element.tagName().equals("i") || element.tagName().equals("em") || element.tagName().equals("u") || element.tagName().equals("cite");
     }
 
     private boolean isCode(Element element) {
