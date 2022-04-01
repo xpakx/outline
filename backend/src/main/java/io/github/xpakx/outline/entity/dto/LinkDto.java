@@ -5,4 +5,5 @@ public interface LinkDto {
     String getContent();
     String getTitle();
     String getDate();
+    String getAuthor();
 }
