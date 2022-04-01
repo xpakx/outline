@@ -3,4 +3,5 @@ export interface Link {
     content: string;
     title: string;
     date: string;
+    author: string;
 }

@@ -1,3 +1,7 @@
 <div *ngIf="page">
+    <h1>{{ page.title }}</h1>
+    <div>
+        <span class="author">{{ page.author }}</span> at <span class="author">{{ page.date }}</span>
+    </div>
     {{ page.content }}
 </div>

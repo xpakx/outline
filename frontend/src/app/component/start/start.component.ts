@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { OutlineResponse } from 'src/app/entity/outline-response';
 import { OutlineService } from 'src/app/service/outline.service';
 
 @Component({
@@ -24,8 +25,8 @@ export class StartComponent implements OnInit {
   generateOutline(): void {
     if(this.form.valid) {
       this.service.outline({url: this.form.controls.search.value}).subscribe(
-        (response: String) => {
-          this.router.navigate(['/'+response]);
+        (response: OutlineResponse) => {
+          this.router.navigate(['/'+response.shortUrl]);
         },
         (error: HttpErrorResponse) => {
          

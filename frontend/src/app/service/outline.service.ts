@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Link } from '../entity/link';
 import { OutlineRequest } from '../entity/outline-request';
+import { OutlineResponse } from '../entity/outline-response';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,8 @@ export class OutlineService {
 
   constructor(private http: HttpClient) { }
 
-  public outline(request: OutlineRequest):  Observable<String> {
-    return this.http.post<String>(`${this.apiServerUrl}/outline`, request);
+  public outline(request: OutlineRequest):  Observable<OutlineResponse> {
+    return this.http.post<OutlineResponse>(`${this.apiServerUrl}/outline`, request);
   }
 
   public get(shortLink: string):  Observable<Link> {

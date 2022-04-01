@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Link } from 'src/app/entity/link';
 import { OutlineService } from 'src/app/service/outline.service';
 
@@ -11,9 +12,12 @@ import { OutlineService } from 'src/app/service/outline.service';
 export class DisplayComponent implements OnInit {
   page: Link | undefined;
 
-  constructor(private service: OutlineService) { }
+  constructor(private service: OutlineService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    this.route.params.subscribe(routeParams => {
+      this.loadLink(routeParams.shortUrl);
+    }); 
   }
 
   loadLink(url: string): void {
