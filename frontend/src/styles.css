@@ -3,6 +3,7 @@
 .markdown img {
     max-width: 50%;
     margin: auto;
+    display: block;
 }
 
 .markdown a {
