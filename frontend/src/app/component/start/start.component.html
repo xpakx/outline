@@ -1,1 +1,10 @@
-<p>start works!</p>
+<h1>Outliner</h1>
+<div>Read articles without distraction</div>
+<form class="form" [formGroup]="form">
+    <label for="search">Name</label>
+    <input autofocus placeholder="" id="search" formControlName="search">
+</form>
+<button (click)="generateOutline()">
+    Outline!
+</button>
+<div>See an example</div>

@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { StartComponent } from './component/start/start.component';
 import { DisplayComponent } from './component/display/display.component';
 import { LoadingComponent } from './component/loading/loading.component';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,10 @@ import { LoadingComponent } from './component/loading/loading.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
