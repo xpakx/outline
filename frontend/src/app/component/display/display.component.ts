@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ClipboardService } from 'ngx-clipboard';
 import { Link } from 'src/app/entity/link';
 import { OutlineService } from 'src/app/service/outline.service';
 
@@ -12,7 +13,7 @@ import { OutlineService } from 'src/app/service/outline.service';
 export class DisplayComponent implements OnInit {
   page: Link | undefined;
 
-  constructor(private service: OutlineService, private route: ActivatedRoute) { }
+  constructor(private service: OutlineService, private route: ActivatedRoute, private clipboard: ClipboardService) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(routeParams => {
@@ -38,6 +39,8 @@ export class DisplayComponent implements OnInit {
   }
 
   downloadMd(): void {
-    
+    if(this.page) {
+      this.clipboard.copyFromContent(this.page.content);
+    }
   }
 }
