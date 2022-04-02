@@ -12,6 +12,7 @@ import { OutlineService } from 'src/app/service/outline.service';
 })
 export class DisplayComponent implements OnInit {
   page: Link | undefined;
+  hypothesisLoaded: boolean = false;
 
   constructor(private service: OutlineService, private route: ActivatedRoute, private clipboard: ClipboardService) { }
 
@@ -33,9 +34,12 @@ export class DisplayComponent implements OnInit {
   }
 
   loadHypothesis(): void {
-    var script = document.createElement('script');
-    script.setAttribute('src', 'https://hypothes.is/embed.js');
-    document.body.appendChild(script);
+    if(!this.hypothesisLoaded) {
+      var script = document.createElement('script');
+      script.setAttribute('src', 'https://hypothes.is/embed.js');
+      document.body.appendChild(script);
+      this.hypothesisLoaded = true;
+    }
   }
 
   downloadMd(): void {
