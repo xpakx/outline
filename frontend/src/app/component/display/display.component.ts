@@ -30,4 +30,14 @@ export class DisplayComponent implements OnInit {
       }
     );
   }
+
+  loadHypothesis(): void {
+    var script = document.createElement('script');
+    script.setAttribute('src', 'https://hypothes.is/embed.js');
+    document.body.appendChild(script);
+  }
+
+  downloadMd(): void {
+    
+  }
 }
