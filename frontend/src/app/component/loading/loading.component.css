@@ -1,0 +1,52 @@
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.loading-bars {
+    flex-direction: column;
+    display: flex;
+
+}
+
+.lines {
+    width: 100%;
+}
+
+.line {
+    width: 0;
+    height: 10px;
+    background-color: gray;
+    margin-bottom: 5px;
+    animation: progressBar 2s ease-in;
+    animation-iteration-count: infinite;
+}
+
+.line-2 {
+    animation-delay: 250ms;
+}
+
+.line-3 {
+    animation-delay: 500ms;
+}
+
+.loading-text {
+    text-transform: uppercase;
+    color: gray;
+    animation: blink 1s ease-in;
+    animation-iteration-count: infinite;
+}
+
+@keyframes progressBar { 
+    0% { width: 0; margin-left: 0; }
+    50% { width: 100%; margin-left: 0; }
+    100% { width: 0; margin-left: 100%; }
+}
+
+@keyframes blink {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
