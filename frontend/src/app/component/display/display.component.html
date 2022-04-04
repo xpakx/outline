@@ -17,11 +17,23 @@
             </button>
         </div>
     </div>
+
     <h1>{{ page.title }}</h1>
-    <div>
-        <span class="author">{{ page.author }}</span> at <span class="author">{{ page.date }}</span>
+    <div class="author-container">
+        <span class="author-elem">{{ page.author }}</span> at <span class="author-elem">{{ page.date }}</span>
     </div>
     <markdown class="markdown" ngPreserveWhitespaces>
         {{ page.content }}
     </markdown>
+
+    <div class="article-footer">
+        <div class="url-container">
+            <span class="url-copy">
+                {{ url }}
+            </span>
+            <button class="url-button" (click)="copyUrl()">
+                Copy
+            </button>
+        </div>
+    </div>
 </div>

@@ -54,3 +54,40 @@ h1 {
 .attribution .publication a {
     text-decoration: none !important;
 }
+
+.article-footer {
+    display: flex;
+    justify-content: right;
+}
+
+.url-button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    border-radius: 20px;
+    color: white;
+    font-variant: small-caps;
+    background-color: #25d084;
+    padding: 5px 14px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.url-button:hover {
+    opacity: 0.8;
+}
+
+.url-container {
+    background-color: #ededed;
+    padding: 10px 5px;
+    border-radius: 5px;
+
+}
+
+.url-copy {
+    background-color: #ededed;
+    border: none !important;
+    color: gray;
+    padding-left: 8px;
+    font-size: 14px;
+}
