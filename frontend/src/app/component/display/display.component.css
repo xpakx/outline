@@ -91,3 +91,14 @@ h1 {
     padding-left: 8px;
     font-size: 14px;
 }
+
+.author-container {
+    font-size: 0.6em;
+    letter-spacing: 0.05em;
+}
+
+.author-elem {
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #7e8484;
+}
