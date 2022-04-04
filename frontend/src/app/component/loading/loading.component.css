@@ -20,16 +20,21 @@
     height: 10px;
     background-color: gray;
     margin-bottom: 5px;
-    animation: progressBar 2s ease-in;
+}
+
+.line-1 {
+    animation: progressBar1 2s ease-in;
     animation-iteration-count: infinite;
 }
 
 .line-2 {
-    animation-delay: 250ms;
+    animation: progressBar2 2s ease-in;
+    animation-iteration-count: infinite;
 }
 
 .line-3 {
-    animation-delay: 500ms;
+    animation: progressBar3 2s ease-in;
+    animation-iteration-count: infinite;
 }
 
 .loading-text {
@@ -39,9 +44,28 @@
     animation-iteration-count: infinite;
 }
 
-@keyframes progressBar { 
+@keyframes progressBar1 { 
     0% { width: 0; margin-left: 0; }
+    33% { width: 100%; margin-left: 0; }
     50% { width: 100%; margin-left: 0; }
+    82% { width: 0; margin-left: 100%; }
+    100% { width: 0; margin-left: 100%; }
+}
+
+@keyframes progressBar2 { 
+    0% { width: 0; margin-left: 0; }
+    8% { width: 0; margin-left: 0; }
+    41% { width: 100%; margin-left: 0; }
+    58% { width: 100%; margin-left: 0; }
+    90% { width: 0; margin-left: 100%; }
+    100% { width: 0; margin-left: 100%; }
+}
+
+@keyframes progressBar3 { 
+    0% { width: 0; margin-left: 0; }
+    17% { width: 0; margin-left: 0; }
+    50% { width: 100%; margin-left: 0; }
+    66% { width: 100%; margin-left: 0; }
     100% { width: 0; margin-left: 100%; }
 }
 
