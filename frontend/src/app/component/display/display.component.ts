@@ -42,7 +42,7 @@ export class DisplayComponent implements OnInit {
     }
   }
 
-  downloadMd(): void {
+  copyMd(): void {
     if(this.page) {
       this.clipboard.copyFromContent(this.page.content);
     }
