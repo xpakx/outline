@@ -21,7 +21,7 @@
     <h1>{{ page.title }}</h1>
     <div class="author-container">
         <span class="author-elem" *ngIf="page.author">{{ page.author }}</span>
-        <ng-container *ngIf="page.date"> at <span class="author-elem">{{ page.date }}</span></ng-container>
+        <ng-container *ngIf="page.date"> at <span class="date-elem">{{ page.date }}</span></ng-container>
     </div>
     <markdown class="markdown" ngPreserveWhitespaces>
         {{ page.content }}

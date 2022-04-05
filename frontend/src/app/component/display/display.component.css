@@ -100,5 +100,10 @@ h1 {
 .author-elem {
     font-weight: 700;
     text-transform: uppercase;
+    color: black;
+}
+
+.date-elem {
+    text-transform: uppercase;
     color: #7e8484;
 }
