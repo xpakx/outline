@@ -12,6 +12,7 @@ import { OutlineService } from 'src/app/service/outline.service';
 })
 export class StartComponent implements OnInit {
   form: FormGroup;
+  loading: boolean = false;
 
   constructor(private service: OutlineService, private fb: FormBuilder, private router: Router) { 
     this.form = this.fb.group({
@@ -24,8 +25,10 @@ export class StartComponent implements OnInit {
 
   generateOutline(): void {
     if(this.form.valid) {
+      this.loading = true;
       this.service.outline({url: this.form.controls.search.value}).subscribe(
         (response: OutlineResponse) => {
+          this.loading = false;
           this.router.navigate(['/'+response.shortUrl]);
         },
         (error: HttpErrorResponse) => {
