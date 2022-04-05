@@ -6,17 +6,20 @@ import { AppComponent } from './app.component';
 import { StartComponent } from './component/start/start.component';
 import { DisplayComponent } from './component/display/display.component';
 import { LoadingComponent } from './component/loading/loading.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MarkdownModule } from 'ngx-markdown';
 import { ClipboardModule } from 'ngx-clipboard';
+import { NotFoundComponent } from './component/not-found/not-found.component';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
 
 @NgModule({
   declarations: [
     AppComponent,
     StartComponent,
     DisplayComponent,
-    LoadingComponent
+    LoadingComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
@@ -27,7 +30,12 @@ import { ClipboardModule } from 'ngx-clipboard';
     MarkdownModule.forRoot(),
     ClipboardModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
