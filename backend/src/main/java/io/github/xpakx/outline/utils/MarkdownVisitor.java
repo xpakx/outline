@@ -31,13 +31,13 @@ public class MarkdownVisitor implements NodeVisitor {
         } else if(isBlock(element)) {
             builder.append("\n");
         } else if(isTitle(element, 1)) {
-            builder.append("\n#");
+            builder.append("\n# ");
         } else if(isTitle(element, 2)) {
-            builder.append("\n##");
+            builder.append("\n## ");
         } else if(isTitle(element, 3)) {
-            builder.append("\n###");
+            builder.append("\n### ");
         } else if(isTitle(element, 4)) {
-            builder.append("\n####");
+            builder.append("\n#### ");
         } else if(isBold(element)) {
             builder.append("**");
         } else if(isCursive(element)) {
