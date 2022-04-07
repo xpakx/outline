@@ -1,6 +1,7 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ClipboardService } from 'ngx-clipboard';
 import { Link } from 'src/app/entity/link';
 import { OutlineService } from 'src/app/service/outline.service';
@@ -8,12 +9,18 @@ import { OutlineService } from 'src/app/service/outline.service';
 @Component({
   selector: 'app-display',
   templateUrl: './display.component.html',
-  styleUrls: ['./display.component.css']
+  styleUrls: ['./display.component.css'],
+  animations: [
+    trigger('fadeOut', [
+      transition(':enter', animate('500ms ease-out', style({ opacity: 0, top: '-20px' })))
+    ])
+  ]
 })
 export class DisplayComponent implements OnInit {
   page: Link | undefined;
   hypothesisLoaded: boolean = false;
   url: string = "";
+  urlAnimation: boolean = false;
 
   constructor(private service: OutlineService, private route: ActivatedRoute, private clipboard: ClipboardService) { }
 
@@ -53,6 +60,11 @@ export class DisplayComponent implements OnInit {
   copyUrl(): void {
     if(this.page) {
       this.clipboard.copyFromContent(this.url);
+      this.urlAnimation = true;
     }
+  }
+
+  copyAnimationDone(): void {
+    this.urlAnimation  = false;
   }
 }

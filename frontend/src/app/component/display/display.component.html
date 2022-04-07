@@ -31,6 +31,9 @@
         <div class="url-container">
             <span class="url-copy">
                 {{ url }}
+                <span class="url-copy-animation" @fadeOut *ngIf="urlAnimation" (@fadeOut.done)="copyAnimationDone()">
+                    {{ url }}
+                </span>
             </span>
             <button class="url-button" (click)="copyUrl()">
                 Copy

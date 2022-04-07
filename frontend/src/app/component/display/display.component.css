@@ -86,10 +86,19 @@ h1 {
 
 .url-copy {
     background-color: #ededed;
-    border: none !important;
     color: gray;
     padding-left: 8px;
     font-size: 14px;
+    position: relative;
+}
+
+.url-copy-animation {
+    color: #37929e;
+    padding-left: 8px;
+    font-size: 14px;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .author-container {
