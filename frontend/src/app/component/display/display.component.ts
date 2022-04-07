@@ -19,6 +19,12 @@ import { OutlineService } from 'src/app/service/outline.service';
         style({ opacity: 0, transform: "translateY(10px)"}),
         animate('500ms', style({ opacity: 1, transform: "translateY(0)" }))
       ])
+    ]),
+    trigger('slideDown', [
+      transition(':enter', [
+        style({ transform: "translateY(-100%)"}),
+        animate('500ms', style({ transform: "translateY(0)" }))
+      ])
     ])
   ]
 })
