@@ -1,5 +1,6 @@
-h1 {
+h1.title {
     color: #444443;
+    margin-bottom: 7px;
 }
 
 .article-container {
