@@ -1,4 +1,4 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -13,6 +13,12 @@ import { OutlineService } from 'src/app/service/outline.service';
   animations: [
     trigger('fadeOut', [
       transition(':enter', animate('500ms ease-out', style({ opacity: 0, top: '-20px' })))
+    ]),
+    trigger('slideIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: "translateY(10px)"}),
+        animate('500ms', style({ opacity: 1, transform: "translateY(0)" }))
+      ])
     ])
   ]
 })

@@ -18,14 +18,16 @@
         </div>
     </div>
 
-    <h1>{{ page.title }}</h1>
-    <div class="author-container">
-        <span class="author-elem" *ngIf="page.author">{{ page.author }}</span>
-        <ng-container *ngIf="page.date"> at <span class="date-elem">{{ page.date }}</span></ng-container>
+    <div class="content" @slideIn>
+        <h1>{{ page.title }}</h1>
+        <div class="author-container">
+            <span class="author-elem" *ngIf="page.author">{{ page.author }}</span>
+            <ng-container *ngIf="page.date"> at <span class="date-elem">{{ page.date }}</span></ng-container>
+        </div>
+        <markdown class="markdown" ngPreserveWhitespaces>
+            {{ page.content }}
+        </markdown>
     </div>
-    <markdown class="markdown" ngPreserveWhitespaces>
-        {{ page.content }}
-    </markdown>
 
     <div class="article-footer">
         <div class="url-container">
