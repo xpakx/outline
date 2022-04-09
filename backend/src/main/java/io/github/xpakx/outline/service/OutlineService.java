@@ -50,7 +50,8 @@ public class OutlineService {
             newLink.setTitle(extractService.extractTitle(pageDocument, url));
             newLink.setContent(
                     extractService.postprocessContent(
-                            extractService.extractContent(pageDocument)
+                            extractService.extractContent(pageDocument),
+                            url
                     )
             );
             newLink.setDate(extractService.extractDate(pageDocument, url));

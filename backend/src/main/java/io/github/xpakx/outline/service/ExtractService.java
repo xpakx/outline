@@ -142,7 +142,7 @@ public class ExtractService {
         return doc.body();
     }
 
-    public String postprocessContent(Element doc) {
+    public String postprocessContent(Element doc, URL path) {
         doc.getElementsByTag("style")
                 .forEach(Node::remove);
         doc.getElementsByTag("nav")
@@ -169,7 +169,7 @@ public class ExtractService {
                         .forEach(Node::remove);
             }
         }
-        MarkdownVisitor visitor = new MarkdownVisitor();
+        MarkdownVisitor visitor = new MarkdownVisitor(path);
         NodeTraversor.traverse(visitor, doc);
         return visitor.getResult();
     }

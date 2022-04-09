@@ -5,11 +5,16 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.NodeVisitor;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class MarkdownVisitor implements NodeVisitor {
     private final StringBuilder builder;
     private int listDepth = 0;
+    private URL path;
 
-    public MarkdownVisitor() {
+    public MarkdownVisitor(URL path) {
+        this.path = path;
         this.builder = new StringBuilder();
     }
 
@@ -139,8 +144,12 @@ public class MarkdownVisitor implements NodeVisitor {
         }
     }
 
-    private String getUri(String href) {
-        return href.contains("://") ? href : "";
+    private String getUri(String href)  {
+        try {
+            return new URL(path, href).toString();
+        } catch (MalformedURLException e) {
+            return "";
+        }
     }
 
     public String getResult() {
