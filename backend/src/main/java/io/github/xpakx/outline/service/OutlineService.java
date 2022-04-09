@@ -34,7 +34,7 @@ public class OutlineService {
         Link newLink = new Link();
         newLink.setLongUrl(request.getUrl());
 
-        String pageContent = "";
+        String pageContent;
 
         try {
             pageContent = urlReaderService.read(new URL(request.getUrl()));
