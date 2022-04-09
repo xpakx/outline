@@ -11,7 +11,7 @@ import java.net.URL;
 public class MarkdownVisitor implements NodeVisitor {
     private final StringBuilder builder;
     private int listDepth = 0;
-    private URL path;
+    private final URL path;
 
     public MarkdownVisitor(URL path) {
         this.path = path;
