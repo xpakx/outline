@@ -147,6 +147,8 @@ public class ExtractService {
                 .forEach(Node::remove);
         doc.getElementsByTag("nav")
                 .forEach(Node::remove);
+        doc.getElementsByTag("header")
+                .forEach(Node::remove);
         doc.select("[class*=\"comment\"]")
                 .forEach(Node::remove);
         doc.select("[aria-label*=\"share\"]")
@@ -165,10 +167,11 @@ public class ExtractService {
                         .filter((a) -> a.text()
                                 .replace(" ", "")
                                 .replace("\n", "")
-                                .length() < 100)
+                                .length() < 100 || val.equals("header"))
                         .forEach(Node::remove);
             }
         }
+        
         MarkdownVisitor visitor = new MarkdownVisitor(path);
         NodeTraversor.traverse(visitor, doc);
         return visitor.getResult();
