@@ -1,0 +1,30 @@
+version: '3.3'
+
+services:
+  outlinebackend:
+    build: ./backend/
+    container_name: outlinebackend
+    depends_on:
+      - outlinedb
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://outlinedb:5432/tomato
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - FRONTEND_HOST=http://localhost
+  outlinefrontend:
+    container_name: outlinefrontend
+    build: ./frontend/
+    ports:
+      - "80:80"
+  outlinedb:
+    image: 'postgres:13.1-alpine'
+    container_name: outlinedb
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=tomato
+    expose:
+      - 5432
