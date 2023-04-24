@@ -38,9 +38,9 @@ public class ExtractService {
             return getTitleFromUrl(url);
         }
 
-        return getTitleFromH1s(doc, titleContent).orElse(
-                getTitleFromMetaTags(doc, titleContent).orElse(
-                        splitTitle(titleContent).orElse(
+        return getTitleFromH1s(doc, titleContent).orElseGet(
+                () -> getTitleFromMetaTags(doc, titleContent).orElseGet(
+                        () -> splitTitle(titleContent).orElse(
                                 titleContent
                         )
                 )
@@ -171,7 +171,7 @@ public class ExtractService {
                         .forEach(Node::remove);
             }
         }
-        
+
         MarkdownVisitor visitor = new MarkdownVisitor(path);
         NodeTraversor.traverse(visitor, doc);
         return visitor.getResult();
@@ -332,11 +332,12 @@ public class ExtractService {
         final List<String> metaNameValues = Arrays.asList("shareaholic:article_author_name", "byl",
                 "sailthru.author", "author");
 
-        return getAnyMetaValue(doc, metaNameValues, "name").orElse(
-                getAnyMetaValue(doc, metaPropertyValues, "property").orElse(
-                        getAuthorsFromJsonLd(doc).orElse(
-                                getAuthorsFromLinkRels(doc).orElse(
-                                        getAuthorsFromTagsWithClassContainingAuthor(doc).orElse("")
+        return getAnyMetaValue(doc, metaNameValues, "name").orElseGet(
+                () -> getAnyMetaValue(doc, metaPropertyValues, "property").orElseGet(
+                        () -> getAuthorsFromJsonLd(doc).orElseGet(
+                                () -> getAuthorsFromLinkRels(doc).orElseGet(
+                                        () -> getAuthorsFromTagsWithClassContainingAuthor(doc)
+                                                .orElse("")
                                 )
                         )
                 )
